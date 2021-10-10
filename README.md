@@ -36,10 +36,12 @@ It covers the 3 aspect of study:
 5. Registry
    a. Docker
    b. Harbor
-6. Operating System 
+6. Operating System(Linux) 
    a. TalOS
    b. Ubuntu
    c. Rocky 
+   d. Linux 101
+   e. Virtualization
 7. Scripting 
   a. Bash 
   b. Python
