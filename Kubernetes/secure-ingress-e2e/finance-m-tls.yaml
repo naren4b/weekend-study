@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: finance
+  annotations:
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+    nginx.ingress.kubernetes.io/auth-tls-secret: "finance/finance-tls"    
+    nginx.ingress.kubernetes.io/auth-tls-error-page: "https://naren4biz.in/error.html"
+    nginx.ingress.kubernetes.io/auth-tls-verify-depth: "1"
+    nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"  
+spec:
+  rules:
+  - host: finance.naren4biz.in
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: finance
+            port:
+              number: 5678
+  tls:
+  - hosts:
+      - finance.naren4biz.in
+    secretName: finance-tls              
+

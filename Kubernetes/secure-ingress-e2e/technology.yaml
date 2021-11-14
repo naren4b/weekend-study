@@ -1,0 +1,44 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: technology
+  labels:
+    app: technology
+spec:
+  containers:
+  - name: technology
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=technology"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: technology
+spec:
+  selector:
+    app: technology
+  ports:
+  - port: 5678 
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: technology
+spec:
+  rules:
+  - host: technology.naren4biz.in
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: technology
+            port:
+              number: 5678
+  tls:
+  - hosts:
+      - technology.naren4biz.in
+    secretName: technology-tls              
+

@@ -1,0 +1,45 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: social
+  labels:
+    app: social
+spec:
+  containers:
+  - name: social
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=social"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: social
+spec:
+  selector:
+    app: social
+  ports:
+  - port: 5678 
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: social
+spec:
+  rules:
+  - host: social.naren4biz.in
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: social
+            port:
+              number: 5678
+  tls:
+  - hosts:
+      - social.naren4biz.in
+    secretName: social-tls              
+

@@ -1,0 +1,43 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: naren4biz
+  labels:
+    app: naren4biz
+spec:
+  containers:
+  - name: naren4biz
+    image: naren4b/naren4biz:1.0.0
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: naren4biz
+spec:
+  selector:
+    app: naren4biz
+  ports:
+  - port: 80
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: naren4biz
+spec:
+  rules:
+  - host: naren4biz.in
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: naren4biz
+            port:
+             number: 80
+  tls:
+  - hosts:
+      - naren4biz.in
+    secretName: naren4biz-tls              
+

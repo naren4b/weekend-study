@@ -1,0 +1,45 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: finance
+  labels:
+    app: finance
+spec:
+  containers:
+  - name: finance
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=finance"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: finance
+spec:
+  selector:
+    app: finance
+  ports:
+  - port: 5678 
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: finance
+spec:
+  rules:
+  - host: finance.naren4biz.in
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: finance
+            port:
+              number: 5678
+  tls:
+  - hosts:
+      - finance.naren4biz.in
+    secretName: finance-tls              
+
