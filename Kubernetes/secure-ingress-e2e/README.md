@@ -171,7 +171,7 @@ k create -f ${NAME}.yaml -n ${NAME}
 
 openssl req -new -newkey rsa:4096 -keyout ${NAME}.key -out ${NAME}.csr -nodes -subj '/CN=${NAME}'
 openssl x509 -req -sha256 -days 365 -in ${NAME}.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out ${NAME}.crt
-kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt
+kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt -n ${NAME}
 
 ```
 
@@ -234,7 +234,7 @@ k create -f ${NAME}.yaml -n ${NAME}
 
 openssl req -new -newkey rsa:4096 -keyout ${NAME}.key -out ${NAME}.csr -nodes -subj '/CN=${NAME}'
 openssl x509 -req -sha256 -days 365 -in ${NAME}.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out ${NAME}.crt
-kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt
+kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt -n ${NAME}
 
 ```
 # 2 - Create the `social.naren4biz.in` Application
@@ -294,7 +294,7 @@ k create -f ${NAME}.yaml -n ${NAME}
 
 openssl req -new -newkey rsa:4096 -keyout ${NAME}.key -out ${NAME}.csr -nodes -subj '/CN=${NAME}'
 openssl x509 -req -sha256 -days 365 -in ${NAME}.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out ${NAME}.crt
-kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt
+kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt  -n ${NAME}
 
 ```
 # 3 - Create the `technology.naren4biz.in` Application
@@ -353,7 +353,7 @@ k create -f ${NAME}.yaml -n ${NAME}
 
 openssl req -new -newkey rsa:4096 -keyout ${NAME}.key -out ${NAME}.csr -nodes -subj '/CN=${NAME}'
 openssl x509 -req -sha256 -days 365 -in ${NAME}.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out ${NAME}.crt
-kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt
+kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt  -n ${NAME}
 
 
 ```
