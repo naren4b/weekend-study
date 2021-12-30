@@ -28,7 +28,7 @@
 
 
 # Kubernetes
-- Civo Academy - civo.com/academy
+- Civo Academy - [civo.com/academy](https://www.civo.com/academy)
 - Kubernetes course (techworldwithnana) - https://youtu.be/X48VuDVv0do
 - Kube academy - https://kube.academy/
 - Introduction to Kubernetes (edx) -[Introduction-to-kubernetes](https://www.edx.org/course/introduction-to-kubernetes)
