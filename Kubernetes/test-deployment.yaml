@@ -1,0 +1,46 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: test
+  labels:
+    app: test
+spec:
+  containers:
+  - name: test
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=test"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: test
+spec:
+  selector:
+    app: test
+  ports:
+  - port: 5678 
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    haproxy.org/ingress.class: haproxy
+  name: test
+spec:
+  rules:
+  - host: test.naren4biz.in
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: test
+            port:
+              number: 5678
+  tls:
+  - hosts:
+      - test.local
+    secretName: test-tls              
