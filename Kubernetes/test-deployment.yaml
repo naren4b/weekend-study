@@ -30,7 +30,7 @@ metadata:
   name: test
 spec:
   rules:
-  - host: test.naren4biz.in
+  - host: test.local
     http:
       paths:
       - pathType: Prefix
