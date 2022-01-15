@@ -1,4 +1,4 @@
-# ref: https://metallb.universe.tf/installation/
+# Ref: [MetalLB v0.11.0](https://metallb.universe.tf/installation/)
 ```
 mkdir metallb
 cd metallb
@@ -20,7 +20,7 @@ vi values.yaml
 helm template naren-metallb . -f values.yaml -n metallb-system >naren-metallb.yaml
 ```
 
-# ref: https://github.com/haproxytech/helm-charts/tree/main/kubernetes-ingress
+# Ref: [HaproxyTech](https://github.com/haproxytech/helm-charts/tree/main/kubernetes-ingress)
 ```
 mkdir haproxytech
 cd haproxytech
