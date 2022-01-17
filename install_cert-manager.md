@@ -8,6 +8,7 @@ spec:
   selfSigned: {}
 ```  
 # The Certificate
+```
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -33,3 +34,4 @@ metadata:
 spec:
   ca:
     secretName: root-secret    
+```
