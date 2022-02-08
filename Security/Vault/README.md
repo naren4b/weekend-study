@@ -1,6 +1,11 @@
 # Vault
+![image](https://user-images.githubusercontent.com/3488520/152898200-57a18b69-282d-4f07-8070-f425f6c67080.png)
 
-References :  https://www.youtube.com/watch?v=VYfl-DpZ5wM&t=29&ab_channel=HashiCorp
+_References :_  
+- https://www.youtube.com/watch?v=VYfl-DpZ5wM&t=29&ab_channel=HashiCorp
+- https://shapeshed.com/hashicorp-vault-ldap/
+- https://learn.hashicorp.com/tutorials/vault/oidc-auth?in=vault/auth-methods
+- https://www.burgundywall.com/post/hashicorp-vault-and-freeipa
 # Brief
 ## Types of Secrets 
 1. Secret Management 
@@ -51,4 +56,11 @@ References :  https://www.youtube.com/watch?v=VYfl-DpZ5wM&t=29&ab_channel=HashiC
   - Encryption done properly(opensource , industry standard) 
   - No one sees the key 
   - Offload key management 
+
+![image](https://user-images.githubusercontent.com/3488520/152898262-c2f42f01-e895-4886-9b89-8965ecf3c2d1.png)
+
+
+
+![image](https://user-images.githubusercontent.com/3488520/152898376-2ad99cbd-0fc6-4f51-a68a-9daa825a5256.png)
+
 
