@@ -17,11 +17,12 @@ helm install \
 	  --set controller.kind=DaemonSet \ 
 	  --set controller.daemonset.useHostPort=true \
 	  --set installCRDs=true 
-	  
-	  
- helm install       haproxy-ingresscontroller haproxytech/kubernetes-ingress     --namespace haproxy-ingresscontroller           --create-namespace       --set controller.ingressClassResource.default=true         --set controller.kind=DaemonSet   --set controller.daemonset.useHostPort=true  --set installCRDs=true	  
-	  
 ```	  
+or 
+```
+helm install       haproxy-ingresscontroller haproxytech/kubernetes-ingress     --namespace haproxy-ingresscontroller           --create-namespace       --set controller.ingressClassResource.default=true         --set controller.kind=DaemonSet   --set controller.daemonset.useHostPort=true  --set installCRDs=true	  
+```	  
+	  
 # Check 
 ```
 Kubectl get pod -n haproxy-ingresscontroller
@@ -51,8 +52,9 @@ kubectl get pod -n cert-manager
 kubectl apply -f https://netlify.cert-manager.io/docs/tutorials/acme/example/deployment.yaml
 kubectl apply -f https://netlify.cert-manager.io/docs/tutorials/acme/example/service.yaml
 kubectl create --edit -f https://netlify.cert-manager.io/docs/tutorials/acme/example/ingress.yaml # update the ingress + ingress class and cert-manager annotation
-
+```
 ####### sample #########
+```
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -74,8 +76,9 @@ spec:
   - hosts:
     - naren4biz.in
     secretName: naren4biz-tls
-
-
+```
+# Check Ingress 
+```
 kubectl get ing kuard
 ```
 # Test ingress
@@ -87,6 +90,7 @@ curl -kivL -H 'Host: www.naren4biz.in' 'https://<node-ip>'
 ```
 kubectl create --edit -f https://cert-manager.io/docs/tutorials/acme/example/staging-issuer.yaml
 ```
+####### sample #########
 ```
 apiVersion: cert-manager.io/v1
 kind: Issuer
@@ -112,6 +116,7 @@ spec:
 ```
 kubectl create --edit -f https://cert-manager.io/docs/tutorials/acme/example/ingress-tls.yaml
 ```
+####### sample #########
 ```
 apiVersion: extensions/v1beta1
 kind: Ingress
