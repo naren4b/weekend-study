@@ -150,9 +150,9 @@ kubectl get orders
 ```
 
 ref: 
-	- https://www.haproxy.com/blog/use-helm-to-install-the-haproxy-kubernetes-ingress-controller/
-	- https://cert-manager.io/docs/tutorials/acme/nginx-ingress/
-	- https://kind.sigs.k8s.io/docs/user/quick-start/
+- https://www.haproxy.com/blog/use-helm-to-install-the-haproxy-kubernetes-ingress-controller/
+- https://cert-manager.io/docs/tutorials/acme/nginx-ingress/
+- https://kind.sigs.k8s.io/docs/user/quick-start/
 
 
 
