@@ -22,14 +22,16 @@ docker run --rm -d  --name nodeExporter --network host -v "/:/host:ro,rslave" qu
 ```
 ### Install prom-msteam
 ```
-docker run -d --name="promteams" --network host -v ${PWD}/promteams/config.yml:/tmp/config.yml -v ${PWD}/promteams/card.tmpl:/tmp/card.tmpl   -e CONFIG_FILE="/tmp/config.yml" -e TEMPLATE_FILE="/tmp/card.tmpl"  quay.io/prometheusmsteams/prometheus-msteams 
+docker run --rm -d --name="promteams" --network host -v ${PWD}/promteams/config.yml:/tmp/config.yml -v ${PWD}/promteams/card.tmpl:/tmp/card.tmpl   -e CONFIG_FILE="/tmp/config.yml" -e TEMPLATE_FILE="/tmp/card.tmpl"  quay.io/prometheusmsteams/prometheus-msteams 
 ```
 
-"CONFIG_FILE=/tmp/config.yml",
-                "TEMPLATE_FILE=/tmp/card.tmpl",
+### Instal Grafana
+```
+docker run --rm -d --name="grafana" --network host grafana/grafana 
+```
 
 ### Install Victoria Metrics
-### Instal Grafana
+
 
 
 
