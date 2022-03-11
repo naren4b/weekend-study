@@ -1,0 +1,2 @@
+connectors:
+- msteam: "https://XXX.webhook.office.com/webhookb2/XXX"
