@@ -8,7 +8,7 @@ global:
   wechat_api_url: https://qyapi.weixin.qq.com/cgi-bin/
   victorops_api_url: https://alert.victorops.com/integrations/generic/20131114/alert/
 route:
-  receiver: jenkinsalert
+  receiver: msteam
   group_by:
   - alertname
   - cluster
