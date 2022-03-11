@@ -9,11 +9,15 @@ docker run --name alertmanager --rm -d --network host -v ${PWD}/alertmanager/ale
 ```
 # Install Blackbox
 ```
- docker run  --name blackbox_exporter --rm -d -p 9115:9115 -v ${PWD}/blackbox-exporter/blackbox.yml:/config/blackbox.yml  quay.io/prometheus/blackbox-exporter:latest --config.file=/config/blackbox.yml
+ docker run  --name blackboxExporter --rm -d -p 9115:9115 -v ${PWD}/blackbox-exporter/blackbox.yml:/config/blackbox.yml  quay.io/prometheus/blackbox-exporter:latest --config.file=/config/blackbox.yml
 
 ```
 
 # Install NodeExporter
+```
+docker run --name nodeExporter --rm -d  -p 9100:9100   -v "/:/host:ro,rslave" quay.io/prometheus/node-exporter:latest --path.rootfs=/host --collector.textfile.directory=/tmp/
+
+```
 # Install Victoria Metrics
 # Instal Grafana
 # Install prom-msteam
