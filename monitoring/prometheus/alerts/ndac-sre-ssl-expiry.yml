@@ -1,0 +1,6 @@
+groups: 
+  - name: ssl_expiry.rules 
+    rules: 
+      - alert: SSLCertExpiringSoon 
+        expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 86400 * 30 
+        for: 10m
