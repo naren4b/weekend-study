@@ -31,7 +31,10 @@ docker run --rm -d --name="grafana" --network host grafana/grafana
 ```
 
 ### Install Victoria Metrics
+```
+docker run -d --name="victoria-metrics" --network host --rm -v ${PWD}/victoria-metrics-data:/victoria-metrics-data victoriametrics/victoria-metrics
 
-
+```
+8428
 
 
