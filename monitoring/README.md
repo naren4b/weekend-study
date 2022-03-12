@@ -50,8 +50,9 @@ http://monitoring.demo.naren4biz.in:9100
 
 ```
 docker run --rm -d --name="promteams" --network host -v ${PWD}/promteams/config.yml:/tmp/config.yml -v ${PWD}/promteams/card.tmpl:/tmp/card.tmpl   -e CONFIG_FILE="/tmp/config.yml" -e TEMPLATE_FILE="/tmp/card.tmpl"  quay.io/prometheusmsteams/prometheus-msteams 
-```
 curl http://monitoring.demo.naren4biz.in:2000/config
+```
+
 
 ### Instal Grafana
 
