@@ -70,6 +70,7 @@ docker run -d --name="victoria-metrics" --network host --rm -v ${PWD}/victoria-m
 ```
 http://monitoring.demo.naren4biz.in:8428/vmui
 
+![image](https://user-images.githubusercontent.com/3488520/158003441-96c0e6e1-b272-4d5e-9388-a224d140dde0.png)
 
 
 
