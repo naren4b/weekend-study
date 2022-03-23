@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+
+Vagrant.configure(2) do |config|
+
+  config.vm.provision "shell", path: "bootstrap.sh"
+
+  config.vm.define "vm" do |node|
+  
+    node.vm.box               = "geerlingguy/ubuntu1804"
+	node.vm.box_version       = "1.1.10"
+    node.vm.box_check_update  = false
+    node.vm.hostname          = "vm.naren.local"
+
+    node.vm.network "private_network", ip: "172.16.16.100"
+  
+    node.vm.provider :virtualbox do |v|
+      v.name    = "vm"
+      v.memory  = 2048
+      v.cpus    =  2
+    end  
+  end
+end
