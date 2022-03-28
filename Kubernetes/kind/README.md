@@ -63,7 +63,7 @@ k get nodes -o wide
 ```  
                                                
 # Install ingress controller 
-# ref: https://github.com/naren4b/weekend-study/tree/main/Kubernetes/secure-ingress-e2e
+ref: https://github.com/naren4b/weekend-study/tree/main/Kubernetes/secure-ingress-e2e
 - 1 Nginx 
 
 ```
@@ -76,7 +76,7 @@ set the nodeSelector
 ```
 
 # Install Storage class 
-# ref: https://github.com/naren4b/weekend-study/tree/main/Storage
+ref: https://github.com/naren4b/weekend-study/tree/main/Storage
 ```
 mkdir rook-ceph
 cd rook-ceph/
