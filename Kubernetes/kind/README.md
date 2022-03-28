@@ -38,7 +38,7 @@ mv ./kind /usr/local/bin/kind
 
 # Create a KIND Cluster 1 master 1 worker 
 ```
-CLUSTER_NAME=demo
+KIND_CLUSTER_NAME=demo
 KIND_NODE_VERSION=v1.22.2
 cat > ${CLUSTER_NAME}-config.yaml <<EOF
 kind: Cluster
@@ -57,7 +57,7 @@ nodes:
   image: kindest/node:${KIND_NODE_VERSION}
 
 EOF
-kind create cluster --name ${CLUSTER_NAME} --config ${CLUSTER_NAME}-config.yaml 
+kind create cluster --name ${KIND_CLUSTER_NAME} --config ${KIND_CLUSTER_NAME}-config.yaml 
 k get nodes -o wide 
 
 ```  
@@ -101,3 +101,23 @@ kubectl get pod -n rook-ceph
 
 kubectl -n rook-ceph logs -l app=rook-ceph-operator -f
 ```
+
+# Copy the private registry details 
+```
+DOCKER_CONFIG=$(mktemp -d)
+
+docker login -u <user>  -p <password> <reg-url>
+export DOCKER_CONFIG
+trap 'echo "Removing ${DOCKER_CONFIG}/*" && rm -rf ${DOCKER_CONFIG:?}' EXIT
+cp ~/.docker/config.json ${DOCKER_CONFIG}/
+
+KIND_CLUSTER_NAME=demo
+for node in $(kind get nodes --name "${KIND_CLUSTER_NAME}"); do
+  node_name=${node#node/}
+  docker cp "${DOCKER_CONFIG}/config.json" "${node_name}:/var/lib/kubelet/config.json"
+  docker exec "${node_name}" systemctl restart kubelet.service; done
+
+
+```
+
+
