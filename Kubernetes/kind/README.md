@@ -105,18 +105,25 @@ kubectl -n rook-ceph logs -l app=rook-ceph-operator -f
 # Copy the private registry details 
 ```
 DOCKER_CONFIG=$(mktemp -d)
-
-docker login -u <user>  -p <password> <reg-url>
 export DOCKER_CONFIG
+docker login -u <user>  -p <password> <reg-url>
 trap 'echo "Removing ${DOCKER_CONFIG}/*" && rm -rf ${DOCKER_CONFIG:?}' EXIT
-cp ~/.docker/config.json ${DOCKER_CONFIG}/
 
 KIND_CLUSTER_NAME=demo
 for node in $(kind get nodes --name "${KIND_CLUSTER_NAME}"); do
   node_name=${node#node/}
   docker cp "${DOCKER_CONFIG}/config.json" "${node_name}:/var/lib/kubelet/config.json"
-  docker exec "${node_name}" systemctl restart kubelet.service; done
+  docker exec "${node_name}" systemctl restart kubelet.service; 
+ done
 
+
+```
+
+# Storage 
+
+```
+kubectl apply -f https://openebs.github.io/charts/openebs-operator.yaml
+Kubectl get sc # check the storage-class name
 
 ```
 
