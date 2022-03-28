@@ -57,7 +57,7 @@ nodes:
   image: kindest/node:${KIND_NODE_VERSION}
 
 EOF
-kind create cluster --name demo-cluster --config ${CLUSTER_NAME}-config.yaml 
+kind create cluster --name ${CLUSTER_NAME} --config ${CLUSTER_NAME}-config.yaml 
 k get nodes -o wide 
 
 ```  
