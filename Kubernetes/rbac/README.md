@@ -2,6 +2,25 @@
 ref: 
 - https://learnk8s.io/rbac-kubernetes
 - https://kubernetes-tutorial.schoolofdevops.com/configuring_authentication_and_authorization/
+- https://schoolofdevops.github.io/ultimate-kubernetes-bootcamp/configuring_authentication_and_authorization/
+
+![image](https://user-images.githubusercontent.com/3488520/161390320-8a616cea-79ed-4211-936e-15010f0307bd.png)
+
+### Defination : 
+#### How one can access the Kubernetes API?
+- Kubectl - A command line utility of Kubernetes
+- Client libraries - Go, Python, etc.,
+- REST requests
+
+#### Type of accessor  for kube-api 
+- Human Users
+- Group 
+- Service Accounts
+  - Custom Created 
+  - System   
+
+
+O: Org name. This is actually used as a group by kubernetes while authenticating/authorizing users. You could add as many as you need
 
 
 ### Generate the user's private key
@@ -15,6 +34,9 @@ openssl genrsa -out naren.key 2048
 #### Generate Certification Signing Request (CSR) 
 ```
 openssl req -new -key naren.key -out naren.csr -subj "/CN=naren/O=dev/O=example.org"
+
+# CN: This will be set as username
+# O: Org name. This is actually used as a group by kubernetes while authenticating/authorizing users. You could add as many as you need
 ```
 ### Choose out of two options 
 ### - Option 1 (if you have access to CA files )
