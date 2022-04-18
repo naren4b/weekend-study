@@ -1,6 +1,11 @@
-# Create the root CA `naren4biz.in`
+# Create the root CA `naren4biz.in` and application crts
 ```
+docker run -it --rm -v ${HOME}:/root/ -v ${PWD}:/work -w /work --net host alpine sh
+apk add openssl 
+NAME=naren4biz
 openssl req -x509 -sha256 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 356 -nodes -subj '/CN=naren4biz Cert Authority'
+openssl req -new -newkey rsa:4096 -keyout ${NAME}.key -out ${NAME}.csr -nodes -subj '/CN=${NAME}'
+openssl x509 -req -sha256 -days 365 -in ${NAME}.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out ${NAME}.crt
 
 ```
 
@@ -168,9 +173,6 @@ EOF
 k create -f ${NAME}.yaml -n ${NAME}
 
 # Create the `naren4biz.in` CRT
-
-openssl req -new -newkey rsa:4096 -keyout ${NAME}.key -out ${NAME}.csr -nodes -subj '/CN=${NAME}'
-openssl x509 -req -sha256 -days 365 -in ${NAME}.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out ${NAME}.crt
 kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt -n ${NAME}
 
 ```
@@ -232,8 +234,7 @@ k create -f ${NAME}.yaml -n ${NAME}
 
 # Create the `finance.naren4biz.in` CRT
 
-openssl req -new -newkey rsa:4096 -keyout ${NAME}.key -out ${NAME}.csr -nodes -subj '/CN=${NAME}'
-openssl x509 -req -sha256 -days 365 -in ${NAME}.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out ${NAME}.crt
+
 kubectl create secret generic ${NAME}-tls --from-file=tls.crt=${NAME}.crt --from-file=tls.key=${NAME}.key --from-file=ca.crt=ca.crt -n ${NAME}
 
 ```
