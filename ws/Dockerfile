@@ -7,7 +7,10 @@ RUN export http_proxy="http://10.20.48.24:8080" && \
 RUN apk update
 
 # default
-RUN apk add --no-cache util-linux pciutils usbutils coreutils binutils findutils grep openssl git netcat-openbsd ca-certificates jq bash bash-doc bash-completion udisks2 udisks2-doc curl 
+RUN apk add --no-cache util-linux pciutils usbutils coreutils binutils findutils grep openssl git netcat-openbsd ca-certificates \
+                       jq bash bash-doc bash-completion udisks2 udisks2-doc curl \
+		       fzf
+		       
 
 # install java 
 RUN apk fetch openjdk8 && \
