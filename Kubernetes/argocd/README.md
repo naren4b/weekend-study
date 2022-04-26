@@ -20,4 +20,4 @@ bash scripts/add_cluster_to_argocd.sh
 ```
 
 # Clean up  
-![cleanup_argocd.PNG](/img/cleanup_argocd.PNG)
+![cleanup_argocd.PNG](img/cleanup_argocd.PNG)
