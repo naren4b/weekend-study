@@ -6,8 +6,6 @@
 # This will install the helm and setup the argocd Helm chart 
 ####################################################################
 
-
-
 read -p 'Enter cluster sepcific value file path: ' valuePath
 read -p 'Enter cluster context(i.e. kind-blue): ' clustercontext
 read -p 'Enter kube-config-path: ' kubeconfigPath

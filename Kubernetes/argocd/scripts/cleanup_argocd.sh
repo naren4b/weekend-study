@@ -8,8 +8,7 @@
 
 read -p 'Enter release-name: ' releaseName
 
-rm -rf argo-cd
-rm -rf ${releaseName}-values.yaml
-rm -rf original_out.yaml 
+rm -rf ${releaseName}
+
 
 
