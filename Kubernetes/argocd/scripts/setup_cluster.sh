@@ -3,12 +3,15 @@
 ####################################################################
 # USAGE:
 #    bash  setup_cluster.sh 
-# This will install the helm and setup the argocd Helm chart 
+# This will add the service account at the kube-system namespace 
+# Create the Cluster.yaml file to be applied to the Argocd 
 ####################################################################
 
-read -p 'Enter cluster-name: ' clusterName
-read -p 'Enter cluster context(i.e. kind-blue): ' clustercontext
 read -p 'Enter kube-config-path: ' kubeconfigPath
+kubeconfigPath=${kubeconfigPath:-/c/Users/npanda/.kube/config}
+echo $kubeconfigPath
+read -p 'Enter cluster context(i.e. kind-green): ' clustercontext
+read -p 'Enter cluster-name: ' clusterName
 read -p 'Enter Server Address: ' clusterurl
 
 export KUBECONFIG="${kubeconfigPath}"
@@ -42,7 +45,7 @@ EOF
 # get_secrets gets the argocd-manger-secret from all the clusters
 # File is saved as clusterName-argo-cluster-secret.yaml in current directory
 get_secrets(){
-    secretFolderName="argo-cluster-secrets"
+    secretFolderName="_out/argo-cluster-secrets"
     mkdir -p $secretFolderName
     secretname=`kubectl get sa argocd-manager -n kube-system -o jsonpath="{.secrets[0].name}"`
     token=`kubectl get secret "${secretname}" -n kube-system -o jsonpath="{.data.token}" | base64 -d`

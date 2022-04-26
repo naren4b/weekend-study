@@ -3,7 +3,7 @@
 ####################################################################
 # USAGE:
 #    bash setup_argocd.sh
-# This will install the helm and setup the argocd Helm chart
+# This will setup the argocd installation for the very first time 
 ####################################################################
 
 read -p 'Enter release-name: ' releaseName
