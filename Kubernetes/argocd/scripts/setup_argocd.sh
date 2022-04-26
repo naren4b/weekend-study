@@ -13,7 +13,7 @@ REPO_URL=https://argoproj.github.io/argo-helm
 REPO_NAME=argo
 REPO_PATH=argo-cd
 NAMESPACE=argocd
-RELEASE_NAME=releaseName 
+RELEASE_NAME=$releaseName 
 
 # Add the repo
 helm repo add ${REPO_NAME} ${REPO_URL}
@@ -21,8 +21,10 @@ helm repo add ${REPO_NAME} ${REPO_URL}
 #Update the repo
 helm repo update
 
+
 # Get the Templates
 helm fetch ${REPO_NAME}/${REPO_PATH} --untar
+
 
 # Make a copy of the default value files
 helm show values ${REPO_NAME}/${REPO_PATH} >${RELEASE_NAME}-values.yaml
