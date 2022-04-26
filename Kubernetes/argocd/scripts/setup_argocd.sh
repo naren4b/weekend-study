@@ -14,6 +14,7 @@ REPO_NAME=argo
 REPO_PATH=argo-cd
 NAMESPACE=argocd
 RELEASE_NAME=$releaseName
+OUTPUT_DIR=_out
 
 # Add the repo
 helm repo add ${REPO_NAME} ${REPO_URL}
@@ -22,11 +23,11 @@ helm repo add ${REPO_NAME} ${REPO_URL}
 helm repo update
 
 # Get the Templates
-helm fetch ${REPO_NAME}/${REPO_PATH} --untar --untardir ${RELEASE_NAME}
+helm fetch ${REPO_NAME}/${REPO_PATH} --untar --untardir ${OUTPUT_DIR}
 
 # Make a copy of the default value files
-helm show values ${REPO_NAME}/${REPO_PATH} >${RELEASE_NAME}/${RELEASE_NAME}-values.yaml
-echo "vi ${RELEASE_NAME}/${RELEASE_NAME}-values.yaml"
+helm show values ${REPO_NAME}/${REPO_PATH} >${OUTPUT_DIR}/${RELEASE_NAME}-values.yaml
+echo "vi ${OUTPUT_DIR}/${RELEASE_NAME}-values.yaml"
 
 # Default  Argocd deployment file
-helm template ${RELEASE_NAME} ${REPO_NAME}/${REPO_PATH} -f ${RELEASE_NAME}/${RELEASE_NAME}-values.yaml --create-namespace -n ${NAMESPACE} --debug --dry-run >${RELEASE_NAME}/original_out.yaml
+helm template ${RELEASE_NAME} ${REPO_NAME}/${REPO_PATH} -f ${OUTPUT_DIR}/${RELEASE_NAME}-values.yaml --create-namespace -n ${NAMESPACE} --debug --dry-run >${OUTPUT_DIR}/original_out.yaml
