@@ -3,7 +3,7 @@
 # Source: http://kubernetes.io/docs/getting-started-guides/kubeadm
 # Source: https://github.com/killer-sh/cks-course-environment/tree/master/cluster-setup/latest
 KUBE_VERSION=1.22.2
-
+ENDPOINT=$1 # kmaster1.naren.com
 
 ### setup terminal
 apt-get update
@@ -120,14 +120,14 @@ cat <<EOF | sudo tee /etc/containers/registries.conf
 registries = ['docker.io']
 EOF
 
-
+### /etc/ssl/certs for private registry
 ### start services
 systemctl daemon-reload
 systemctl enable containerd
 systemctl restart containerd
 systemctl enable kubelet && systemctl start kubelet
 
-ENDPOINT=kmaster1.naren.com
+
 
 ### init k8s
 rm /root/.kube/config
