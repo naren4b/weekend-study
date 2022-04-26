@@ -1,25 +1,16 @@
-# Install argocd in cluster 
-
-#### FOR THE VERY FIRST TIME 
+# Setup ArgoCD value file for First Cluster
 ```
-bash install_argocd.sh generate <dc-name>
+bash ../scripts/setup_argocd.sh 
 ```
-![install_argocd_generate.PNG](img/install_argocd_generate.PNG)
-####  Fix the value file or existing value file use this command 
+# Install ArgoCD at First cluster 
 ```
-bash install_argocd.sh template <dc-name>
+bash ../scripts/install_argocd.sh 
 ```
-![install_argocd_template.PNG](img/install_argocd_template.PNG)
-
-# Setup the target clusters
+# Setup the Service Account at second/leaf for clusters (repeat for every cluster wants to controlled by Argocd)
 ```
-setup_cluster.sh
-
+bash ../scripts/setup_cluster.sh 
 ```
-![setup_cluster.PNG](img/setup_cluster.PNG)
 # Add the cluster to argocd 
 ```
-bash add_cluster_to_argocd.sh
-
+bash ../scripts/add_cluster_to_argocd.sh
 ```
-![add_cluster_to_argocd.PNG](img/add_cluster_to_argocd.PNG)

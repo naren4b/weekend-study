@@ -1,8 +1,18 @@
+#!/bin/bash
+
+####################################################################
+# USAGE:
+#    bash  setup_cluster.sh 
+# This will install the helm and setup the argocd Helm chart 
+####################################################################
+
 read -p 'Enter cluster-name: ' clusterName
+read -p 'Enter cluster context(i.e. kind-blue): ' clustercontext
 read -p 'Enter kube-config-path: ' kubeconfigPath
 read -p 'Enter Server Address: ' clusterurl
 
 export KUBECONFIG="${kubeconfigPath}"
+kubectl config set-context ${clustercontext}
 kubectl cluster-info
 echo "Create sa argocd-manager in kube-system namespace"
 kubectl create sa -n kube-system  argocd-manager
