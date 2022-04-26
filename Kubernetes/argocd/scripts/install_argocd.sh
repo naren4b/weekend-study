@@ -9,13 +9,13 @@
 
 
 read -p 'Enter cluster sepcific value file path: ' valuePath
-read -p 'Enter cluster-name: ' clusterName
 read -p 'Enter cluster context(i.e. kind-blue): ' clustercontext
 read -p 'Enter kube-config-path: ' kubeconfigPath
 read -p 'Enter Server Address: ' clusterurl
+read -p 'Enter release-name: ' releaseName
 
 REPO_PATH=argo-cd
-MY_RELEASE=clusterName
+MY_RELEASE=releaseName
 NAMESPACE=argocd
 
 export KUBECONFIG="${kubeconfigPath}"
