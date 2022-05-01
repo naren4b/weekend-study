@@ -2,8 +2,14 @@
 
 # Source: http://kubernetes.io/docs/getting-started-guides/kubeadm
 # Source: https://github.com/killer-sh/cks-course-environment/tree/master/cluster-setup/latest
+
+read -p 'Enter ENDPOINT address : ' ENDPOINT
+ENDPOINT=${ENDPOINT:-k8s.naren.local} 
+echo $(hostname -i)  k8s.naren.local >> /etc/hosts
+
+
 KUBE_VERSION=1.22.2
-ENDPOINT=$1 # kmaster1.naren.com
+ENDPOINT=$1 # k8s.naren.local
 
 ### setup terminal
 apt-get update
