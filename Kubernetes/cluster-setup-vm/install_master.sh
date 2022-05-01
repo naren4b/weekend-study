@@ -5,7 +5,7 @@
 
 read -p 'Enter ENDPOINT address : ' ENDPOINT
 ENDPOINT=${ENDPOINT:-k8s.naren.local} 
-echo $(hostname -i)  k8s.naren.local >> /etc/hosts
+echo $(hostname -i)  ${ENDPOINT} >> /etc/hosts
 
 
 KUBE_VERSION=1.22.2
@@ -145,14 +145,14 @@ sudo cp -i /etc/kubernetes/admin.conf ~/.kube/config
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
 ### To untaint 
-echo kubectl taint node $(hostname) node-role.kubernetes.io/master-
+kubectl taint node $(hostname) node-role.kubernetes.io/master-
 
 ### install storage class 
-echo kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 
 ### install ingress controller 
-echo kubectl label nodes  $(hostname) --overwrite=true app.kubernetes.io/component=controller  app.kubernetes.io/instance=ingress-nginx  app.kubernetes.io/name=ingress-nginx ingress-ready=true kubernetes.io/os=linux 
-echo kubectl create -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+kubectl label nodes  $(hostname) --overwrite=true app.kubernetes.io/component=controller  app.kubernetes.io/instance=ingress-nginx  app.kubernetes.io/name=ingress-nginx ingress-ready=true kubernetes.io/os=linux 
+kubectl create -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
 echo
 echo "### COMMAND TO ADD A WORKER NODE ###"
