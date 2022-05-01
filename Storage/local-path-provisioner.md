@@ -3,7 +3,7 @@ ref:
 
 #### Step-1: Installation Local Path Provisioner
 ```
-kubectl apply -f https://raw.githubusercontent.com/rancher/local-p/ath-provisioner/master/deploy/local-path-storage.yaml
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 
 ```
 
