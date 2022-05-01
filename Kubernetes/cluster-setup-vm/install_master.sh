@@ -7,9 +7,7 @@ read -p 'Enter ENDPOINT address : ' ENDPOINT
 ENDPOINT=${ENDPOINT:-k8s.naren.local} 
 echo $(hostname -i)  ${ENDPOINT} >> /etc/hosts
 
-
 KUBE_VERSION=1.22.2
-ENDPOINT=$1 # k8s.naren.local
 
 ### setup terminal
 apt-get update
