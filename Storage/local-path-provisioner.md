@@ -9,12 +9,12 @@ kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisione
 
 #### Step-2 Create Test PVC
 ```
-kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/examples/pvc.yaml
+kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/examples/pvc/pvc.yaml
 
 ```
-#### Step-3 Create a Test Ppd
+#### Step-3 Create a Test Pod
 ```
-kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/examples/pod.yaml
+kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/examples/pod/pod.yaml
 
 ```
 #### Step-4 Check the pv get created automatically 
