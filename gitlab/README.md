@@ -1,8 +1,6 @@
 # Install gitlab with helm e2e 
 
-
-
-#### Create KIND cluster 
+# Create KIND cluster 
 
 ```
 cat >kind-config.yaml <<EOF
@@ -40,17 +38,19 @@ kind get kubeconfig --name=gitlab > gitlab-kubeconfig
 export KUBECONFIG=gitlab-kubeconfig
 
 ```
-##### Add gitlab Repo 
+# Add gitlab Repo 
 ```
 REPO_URL=https://charts.gitlab.io/
 REPO_NAME=gitlab
 REPO_PATH=gitlab
 NAMESPACE=gitlab
-RELEASE_NAME=us-west
+RELEASE_NAME=naren
 VERSION=5.10.0
+DOMAIN=naren.local
+EXTERNAL_IP=127.0.0.1
 ```
 
-#### Add the repo 
+# Add the repo 
 ```
 helm repo add ${REPO_NAME} ${REPO_URL}
 #Update the repo 
@@ -62,29 +62,28 @@ helm show values ${REPO_NAME}/${REPO_PATH} --version=${VERSION} > ${RELEASE_NAME
 
 ```
 
-#### Get the Template 
+# Get the Template 
 ```
 echo helm template ${RELEASE_NAME}-${REPO_NAME} ${REPO_NAME}/${REPO_PATH} --version=${VERSION}  -f ${RELEASE_NAME}-${REPO_NAME}-values.yaml -n ${NAMESPACE} --debug --dry-run 
 ```
 
-#### Install 
+# Install 
 ```
-kubectl create namespace gitlab 
-helm template ${RELEASE_NAME}-${REPO_NAME} ${REPO_NAME}/${REPO_PATH} --version=${VERSION}  -f ${RELEASE_NAME}-${REPO_NAME}-values.yaml -n ${NAMESPACE} >${RELEASE_NAME}-${REPO_NAME}-out.yaml
+kubectl create namespace gitlab -o yaml --dry-run=client >${RELEASE_NAME}-${REPO_NAME}-out.yaml
+echo "---" >>${RELEASE_NAME}-${REPO_NAME}-out.yaml
+helm template ${RELEASE_NAME}-${REPO_NAME} ${REPO_NAME}/${REPO_PATH} --version=${VERSION}  -f ${RELEASE_NAME}-${REPO_NAME}-values.yaml -n ${NAMESPACE} >>${RELEASE_NAME}-${REPO_NAME}-out.yaml
+
+kubectl apply -f ${RELEASE_NAME}-${REPO_NAME}-out.yaml -n ${NAMESPACE}
+kubectl get pod -n ${NAMESPACE} -w 
 
 ```
-#### Get the initial password for root
+# Get the initial password for root
 kubectl get secret us-west-gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' -n gitlab| base64 --decode ; echo
 
-#### Check the ingress 
+# Check the ingress 
 ```
 NODEPORT=$(kubectl get svc -n gitlab us-west-gitlab-nginx-ingress-controller  -ojsonpath='{.spec.ports[1].nodePort}')
-echo "https://gitlab.cicd.local:${NODEPORT}
+echo "https://gitlab.${DOMAIN}:${NODEPORT}
 
 ```
-
-
-
- 
-
 
