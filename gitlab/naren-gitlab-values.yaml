@@ -261,14 +261,14 @@ global:
 
     ## https://docs.gitlab.com/charts/charts/globals#lfs-artifacts-uploads-packages-external-mr-diffs-and-dependency-proxy
     object_store:
-      enabled: false
+      enabled: false  # TODO 
       proxy_download: true
       storage_options: {}
         # server_side_encryption:
         # server_side_encryption_kms_key_id
-      connection: {}
-        # secret:
-        # key:
+      connection: {}  #TODO
+        # secret:  # TODO
+        # key:     #TODO 
     lfs:
       enabled: true
       proxy_download: true
