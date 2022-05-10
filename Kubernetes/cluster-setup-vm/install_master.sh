@@ -2,8 +2,12 @@
 
 # Source: http://kubernetes.io/docs/getting-started-guides/kubeadm
 # Source: https://github.com/killer-sh/cks-course-environment/tree/master/cluster-setup/latest
+
+read -p 'Enter ENDPOINT address : ' ENDPOINT
+ENDPOINT=${ENDPOINT:-k8s.naren.local} 
+echo $(hostname -i)  ${ENDPOINT} >> /etc/hosts
+
 KUBE_VERSION=1.22.2
-ENDPOINT=$1 # kmaster1.naren.com
 
 ### setup terminal
 apt-get update
@@ -138,7 +142,19 @@ sudo cp -i /etc/kubernetes/admin.conf ~/.kube/config
 
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
+### To untaint 
+kubectl taint node $(hostname) node-role.kubernetes.io/master-
+
+### install storage class 
+kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+
+### install ingress controller 
+kubectl label nodes  $(hostname) --overwrite=true app.kubernetes.io/component=controller  app.kubernetes.io/instance=ingress-nginx  app.kubernetes.io/name=ingress-nginx ingress-ready=true kubernetes.io/os=linux 
+kubectl create -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+
 echo
 echo "### COMMAND TO ADD A WORKER NODE ###"
 kubeadm token create --print-join-command --ttl 0
+
+
 
