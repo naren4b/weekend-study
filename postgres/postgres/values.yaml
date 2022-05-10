@@ -1,0 +1,17 @@
+global: 
+ domain: 10.157.59.34.nip.io
+pg:
+  teamId: gitlab
+  name: pg
+  namespace: gitlab
+  port: 5432
+  metricPort: 9187
+  owner: gitlab
+  volume:
+    size: 1Gi
+    storageClass: local-path
+  numberOfInstances: 2
+  userName: gitlab
+  dbName: gitlab
+
+

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: postgres
+description: A Helm chart for installing zalando/postgres-operator ref - https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md#deployment-options
+type: application
+version: 0.1.0
+appVersion: "1.16.0"

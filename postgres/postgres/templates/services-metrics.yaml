@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.pg.teamId}}-{{.Values.pg.name}}-svc-metrics-master
+  namespace: {{.Values.pg.namespace}}
+  labels:
+    app: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+    spilo-role: master
+  annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "{{.Values.pg.metricPort}}"
+spec:
+  type: ClusterIP
+  ports:
+    - name: exporter
+      port: {{.Values.pg.metricPort}}
+      targetPort: exporter
+  selector:
+    application: spilo
+    cluster-name: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+    spilo-role: master
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.pg.teamId}}-{{.Values.pg.name}}-svc-metrics-replica
+  namespace: {{.Values.pg.namespace}}
+  labels:
+    app: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+    spilo-role: replica
+  annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "{{.Values.pg.metricPort}}"
+spec:
+  type: ClusterIP
+  ports:
+    - name: exporter
+      port: {{.Values.pg.metricPort}}
+      targetPort: exporter
+  selector:
+    application: spilo
+    cluster-name: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+    spilo-role: replica

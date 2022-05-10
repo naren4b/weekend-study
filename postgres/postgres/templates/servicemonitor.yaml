@@ -1,0 +1,41 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{.Values.pg.teamId}}-{{.Values.pg.name}}-svcm-master
+  namespace: {{.Values.pg.namespace}}
+  labels:
+    app: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+    spilo-role: master
+spec:
+  endpoints:
+    - port: exporter
+      interval: 15s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - {{.Values.pg.teamId}}-{{.Values.pg.name}}
+  selector:
+    matchLabels:
+      app: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+      spilo-role: master
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{.Values.pg.teamId}}-{{.Values.pg.name}}-svcm-replica
+  namespace: {{.Values.pg.namespace}}
+  labels:
+    app: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+    spilo-role: replica
+spec:
+  endpoints:
+    - port: exporter
+      interval: 15s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - {{.Values.pg.teamId}}-{{.Values.pg.name}}
+  selector:
+    matchLabels:
+      app: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+      spilo-role: replica

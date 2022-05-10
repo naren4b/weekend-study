@@ -1,0 +1,35 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+  namespace: {{.Values.pg.namespace}}
+  labels:
+    app: {{.Values.pg.teamId}}-{{.Values.pg.name}}
+spec:
+  teamId: {{.Values.pg.teamId}}
+  volume:
+    size: {{.Values.pg.volume.size}} 
+    storageClass: {{.Values.pg.volume.storageClass}} 
+  numberOfInstances: {{.Values.pg.numberOfInstances}}
+  users:
+    {{.Values.pg.owner}}:  
+    - superuser
+    - createdb
+  databases:
+    {{.Values.pg.dbName}}: {{.Values.pg.userName}} 
+  postgresql:
+    version: "14"
+  sidecars:
+    - name: "exporter"
+      image: "wrouesnel/postgres_exporter"
+      ports:
+        - name: exporter
+          containerPort: {{.Values.pg.metricPort}}
+          protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 256M
+        requests:
+          cpu: 100m
+          memory: 200M

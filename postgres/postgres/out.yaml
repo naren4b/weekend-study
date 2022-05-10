@@ -1,0 +1,166 @@
+---
+# Source: postgres/templates/namesapce.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitlab
+---
+# Source: postgres/templates/services-metrics.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-pg-svc-metrics-master
+  namespace: gitlab
+  labels:
+    app: gitlab-pg
+    spilo-role: master
+  annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
+spec:
+  type: ClusterIP
+  ports:
+    - name: exporter
+      port: 9187
+      targetPort: exporter
+  selector:
+    application: spilo
+    cluster-name: gitlab-pg
+    spilo-role: master
+---
+# Source: postgres/templates/services-metrics.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-pg-svc-metrics-replica
+  namespace: gitlab
+  labels:
+    app: gitlab-pg
+    spilo-role: replica
+  annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
+spec:
+  type: ClusterIP
+  ports:
+    - name: exporter
+      port: 9187
+      targetPort: exporter
+  selector:
+    application: spilo
+    cluster-name: gitlab-pg
+    spilo-role: replica
+---
+# Source: postgres/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "gitlab-pg"  
+  namespace: gitlab 
+spec:
+  rules:
+    - host: pg.gitlab.10.157.59.34.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                  name: gitlab-pg
+                  port:
+                    number: 5432
+          - path: /master/metrics
+            pathType: Prefix
+            backend:
+              service:
+                  name: gitlab-pg-svc-metrics-master
+                  port:
+                    number: 9187    
+          - path: /replica/metrics
+            pathType: Prefix
+            backend:
+              service:
+                  name: gitlab-pg-svc-metrics-replica
+                  port:
+                    number: 9187
+---
+# Source: postgres/templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: gitlab-pg-svcm-master
+  namespace: gitlab
+  labels:
+    app: gitlab-pg
+    spilo-role: master
+spec:
+  endpoints:
+    - port: exporter
+      interval: 15s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - gitlab-pg
+  selector:
+    matchLabels:
+      app: gitlab-pg
+      spilo-role: master
+---
+# Source: postgres/templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: gitlab-pg-svcm-replica
+  namespace: gitlab
+  labels:
+    app: gitlab-pg
+    spilo-role: replica
+spec:
+  endpoints:
+    - port: exporter
+      interval: 15s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - gitlab-pg
+  selector:
+    matchLabels:
+      app: gitlab-pg
+      spilo-role: replica
+---
+# Source: postgres/templates/postgresql.yaml
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: gitlab-pg
+  namespace: gitlab
+  labels:
+    app: gitlab-pg
+spec:
+  teamId: gitlab
+  volume:
+    size: 1Gi 
+    storageClass: local-path 
+  numberOfInstances: 2
+  users:
+    gitlab:  
+    - superuser
+    - createdb
+  databases:
+    gitlab: gitlab 
+  postgresql:
+    version: "14"
+  sidecars:
+    - name: "exporter"
+      image: "wrouesnel/postgres_exporter"
+      ports:
+        - name: exporter
+          containerPort: 9187
+          protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 256M
+        requests:
+          cpu: 100m
+          memory: 200M
