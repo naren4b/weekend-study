@@ -44,46 +44,79 @@ REPO_URL=https://charts.gitlab.io/
 REPO_NAME=gitlab
 REPO_PATH=gitlab
 NAMESPACE=gitlab
-RELEASE_NAME=naren
-VERSION=5.10.0
-DOMAIN=naren.local
+RELEASE_NAME=test
+VERSION=5.10.2
+DOMAIN=127.0.0.1.nip.io
 EXTERNAL_IP=127.0.0.1
 ```
 
-# Add the repo 
+# Get the gitlab repo in local 
 ```
+mkdir -p {manifests,charts}
 helm repo add ${REPO_NAME} ${REPO_URL}
-#Update the repo 
 helm repo update
-# Search the repo 
-helm search repo ${REPO_NAME}/${REPO_PATH}
-helm fetch ${REPO_NAME}/${REPO_PATH} --untar --untardir=v${VERSION}  --version=${VERSION}
-helm show values ${REPO_NAME}/${REPO_PATH} --version=${VERSION} > ${RELEASE_NAME}-${REPO_NAME}-values.yaml
-
+helm fetch ${REPO_NAME}/${REPO_PATH} --untar --untardir=./charts/v${VERSION}  --version=${VERSION} gitlab
 ```
 
 # Get the Template 
 ```
-echo helm template ${RELEASE_NAME}-${REPO_NAME} ${REPO_NAME}/${REPO_PATH} --version=${VERSION}  -f ${RELEASE_NAME}-${REPO_NAME}-values.yaml -n ${NAMESPACE} --debug --dry-run 
+helm template ${RELEASE_NAME} ./charts/v${VERSION}/gitlab -f values/sample-gitlab-values.yaml  --create-namespace  -n {NAMESPACE} 
 ```
 
-# Install 
-```
-kubectl create namespace gitlab -o yaml --dry-run=client >${RELEASE_NAME}-${REPO_NAME}-out.yaml
-echo "---" >>${RELEASE_NAME}-${REPO_NAME}-out.yaml
-helm template ${RELEASE_NAME}-${REPO_NAME} ${REPO_NAME}/${REPO_PATH} --version=${VERSION}  -f ${RELEASE_NAME}-${REPO_NAME}-values.yaml -n ${NAMESPACE} >>${RELEASE_NAME}-${REPO_NAME}-out.yaml
+# Install the gitlab 
 
-kubectl apply -f ${RELEASE_NAME}-${REPO_NAME}-out.yaml -n ${NAMESPACE}
+#### Create the namespace 
+```
+kubectl create namespace -n {NAMESPACE} -o yaml
+```
+
+#### External Object store configurations 
+```
+kubectl create secret generic s3cmd-config --from-file=config=resources/s3cmd-config.txt  -n gitlab --dry-run=client -o yaml >manifests/s3cmd-config.yaml
+
+BUCKET_NAME=gitlab-lfs-storage
+SECRET_NAME=objectstore-lfs
+kubectl create secret generic ${SECRET_NAME} --from-file=connection=resources/objectstore-artifacts.yaml  -n gitlab --dry-run=client -o yaml >manifests/${BUCKET_NAME}.yaml
+
+BUCKET_NAME=gitlab-artifacts-storage
+SECRET_NAME=objectstore-artifacts
+kubectl create secret generic ${SECRET_NAME} --from-file=connection=resources/objectstore-artifacts.yaml  -n gitlab --dry-run=client -o yaml >manifests/${BUCKET_NAME}.yaml
+
+BUCKET_NAME=gitlab-uploads-storage
+SECRET_NAME=objectstore-uploads
+kubectl create secret generic ${SECRET_NAME} --from-file=connection=resources/objectstore-artifacts.yaml  -n gitlab --dry-run=client -o yaml >manifests/${BUCKET_NAME}.yaml
+
+BUCKET_NAME=gitlab-packages-storage
+SECRET_NAME=objectstore-packages
+kubectl create secret generic ${SECRET_NAME} --from-file=connection=resources/objectstore-artifacts.yaml  -n gitlab --dry-run=client -o yaml >manifests/${BUCKET_NAME}.yaml
+```
+
+#### Install the gitlab chart 
+```
+kubectl create -f 
+helm template ${RELEASE_NAME} ./charts/v${VERSION}/gitlab -f values/sample-gitlab-values.yaml  --create-namespace  -n {NAMESPACE} > manifests/${RELEASE_NAME}-gitlab-out.yaml
+kubectl apply -f manifests/${RELEASE_NAME}-gitlab-out.yaml -n ${NAMESPACE}
 kubectl get pod -n ${NAMESPACE} -w 
-
 ```
-# Get the initial password for root
+
+#### Get the initial password for root
 kubectl get secret us-west-gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' -n gitlab| base64 --decode ; echo
 
-# Check the ingress 
+#### Check the ingress 
 ```
 NODEPORT=$(kubectl get svc -n gitlab us-west-gitlab-nginx-ingress-controller  -ojsonpath='{.spec.ports[1].nodePort}')
 echo "https://gitlab.${DOMAIN}:${NODEPORT}
 
 ```
+
+
+
+
+
+
+
+
+
+
+
 
