@@ -4,7 +4,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: test-gitaly
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-5.10.2
@@ -23,7 +23,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: test-gitlab-shell
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-shell
     chart: gitlab-shell-5.10.2
@@ -42,7 +42,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: test-sidekiq-all-in-1-v1
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-5.10.2
@@ -63,7 +63,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: test-webservice-default
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: webservice
     chart: webservice-5.10.2
@@ -86,7 +86,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: test-registry-v1
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: registry
     chart: registry-0.7.0
@@ -232,12 +232,173 @@ data:
 
   pre-entrypoint-script: |
 ---
+# Source: gitlab/charts/gitlab/charts/geo-logcursor/templates/configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-geo-logcursor
+  namespace: gitlab
+  labels:
+    app: geo-logcursor
+    chart: geo-logcursor-5.10.2
+    release: test
+    heritage: Helm
+    
+data:
+  installation_type: |
+    gitlab-helm-chart
+  database.yml.erb: |
+    
+    production:
+      main:
+        adapter: postgresql
+        encoding: unicode
+        database: gitlab
+        username: gitlab
+        password: <%= File.read('/etc/gitlab/postgres/psql-password-main').strip.to_json %>
+        host: "gitlab-pg.svc.local"
+        port: 5432
+        connect_timeout: 
+        keepalives: 
+        keepalives_idle: 
+        keepalives_interval: 
+        keepalives_count: 
+        tcp_user_timeout: 
+        application_name: 
+        prepared_statements: false
+        database_tasks: true
+        
+        
+  database_geo.yml.erb: |
+    production:
+      adapter: postgresql
+      encoding: unicode
+      database: "gitlab"
+      username: gitlab
+      password: <%= File.read("/etc/gitlab/postgres/geo-psql-password").strip.to_json %>
+      host: "gitlab-pg.svc.local"
+      port: 5432
+      # load_balancing:
+      #   hosts:
+      #     - host1.example.com
+      #     - host2.example.com
+      
+  smtp_settings.rb: |
+    
+  resque.yml.erb: |
+    production:
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
+      
+      id:
+  
+  
+  
+  cable.yml.erb: |
+    production:
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
+      
+      id:
+      adapter: redis
+  
+  
+  
+  gitlab.yml.erb: |
+    production: &base
+      gitlab:
+        host: gitlab.127.0.0.0.nip.io
+        https: true
+        max_request_duration_seconds: 57
+        impersonation_enabled: 
+        application_settings_cache_seconds: 60
+        usage_ping_enabled: true
+        seat_link_enabled: true
+        default_can_create_group: true
+        username_changing_enabled: true
+        issue_closing_pattern: 
+        default_theme: 
+        default_projects_features:
+          issues: true
+          merge_requests: true
+          wiki: true
+          snippets: true
+          builds: true
+          container_registry: true
+        webhook_timeout: 
+        trusted_proxies:
+        time_zone: "UTC"
+        email_from: "gitlab@127.0.0.0.nip.io"
+        email_display_name: "GitLab"
+        email_reply_to: "noreply@127.0.0.0.nip.io"
+        email_subject_suffix: ""
+      
+      gravatar:
+        plain_url: 
+        ssl_url: 
+      extra:
+        
+        
+        
+        
+        
+        
+      ## Object storage not needed by geo-logcursor
+      artifacts:
+      lfs:
+      uploads:
+      packages:
+      external_diffs:
+      geo:
+        node_name: 
+        registry_replication:
+          enabled: false
+          primary_api_url: 
+      pages:
+        enabled: false
+      mattermost:
+        enabled: false
+      gitlab_ci:
+      kerberos:
+        enabled: false
+      shared:
+      ## Gitaly configuratin is _stubbed_, not used by geo-logcursor
+      gitaly:
+        client_path: /home/git/gitaly/bin
+        token:
+      repositories:
+        storages: # You must have at least a `default` storage path.
+          {"default":{"path":"/srv/gitlab/git-data/repositories","gitaly_address":"unix:/srv/gitlab/gitaly/gitaly.socket"}}
+      backup:
+        path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
+      monitoring:
+        ip_whitelist:
+          - 0.0.0.0/0
+        sidekiq_exporter:
+  configure: |
+    set -e
+    config_dir="/init-config"
+    secret_dir="/init-secrets"
+    
+    for secret in rails-secrets ; do
+      mkdir -p "${secret_dir}/${secret}"
+      cp -v -r -L "${config_dir}/${secret}/." "${secret_dir}/${secret}/"
+    done
+    for secret in postgres redis ; do
+      if [ -e "${config_dir}/${secret}" ]; then
+        mkdir -p "${secret_dir}/${secret}"
+        cp -v -r -L "${config_dir}/${secret}/." "${secret_dir}/${secret}/"
+      fi
+    done
+    
+    
+
+# Leave this here - This line denotes end of block to the parser.
+---
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/configmap.yml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-gitaly
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-5.10.2
@@ -297,7 +458,7 @@ data:
     # location of shared secret for GitLab Shell / API interaction
     secret_file = "/etc/gitlab-secrets/shell/.gitlab_shell_secret"
     # URL of API
-    url = "http://test-webservice-default.{NAMESPACE}.svc:8181/"
+    url = "http://test-webservice-default.gitlab.svc:8181/"
 
     [gitlab.http-settings]
     # read_timeout = 300
@@ -316,7 +477,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-gitlab-exporter
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-5.10.2
@@ -358,7 +519,7 @@ data:
           - probe_retries
           - probe_stats
         opts:
-          redis_url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+          redis_url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
           redis_enable_client: false
 
       ruby: &ruby
@@ -406,7 +567,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-gitlab-shell-sshd
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-shell
     chart: gitlab-shell-5.10.2
@@ -566,7 +727,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-gitlab-shell
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-shell
     chart: gitlab-shell-5.10.2
@@ -597,7 +758,7 @@ data:
     user: git
 
     # Url to gitlab instance. Used for api calls. Should end with a slash.
-    gitlab_url: "http://test-webservice-default.{NAMESPACE}.svc:8181/"
+    gitlab_url: "http://test-webservice-default.gitlab.svc:8181/"
 
     secret_file: /etc/gitlab-secrets/shell/.gitlab_shell_secret
 
@@ -626,7 +787,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-nginx-ingress-tcp
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-shell
     chart: gitlab-shell-5.10.2
@@ -634,14 +795,14 @@ metadata:
     heritage: Helm
     
 data:
-  "22": "{NAMESPACE}/test-gitlab-shell:22"
+  "22": "gitlab/test-gitlab-shell:22"
 ---
 # Source: gitlab/charts/gitlab/charts/migrations/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-migrations
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: migrations
     chart: migrations-5.10.2
@@ -674,9 +835,23 @@ data:
         database_tasks: true
         
         
+  database_geo.yml.erb: |
+    production:
+      adapter: postgresql
+      encoding: unicode
+      database: "gitlab"
+      username: gitlab
+      password: <%= File.read("/etc/gitlab/postgres/geo-psql-password").strip.to_json %>
+      host: "gitlab-pg.svc.local"
+      port: 5432
+      # load_balancing:
+      #   hosts:
+      #     - host1.example.com
+      #     - host2.example.com
+      
   resque.yml.erb: |
     production:
-      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
       
       id:
   
@@ -684,7 +859,7 @@ data:
   
   cable.yml.erb: |
     production:
-      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
       
       id:
       adapter: redis
@@ -702,7 +877,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://test-gitaly-0.test-gitaly.{NAMESPACE}.svc:8075
+            gitaly_address: tcp://test-gitaly-0.test-gitaly.gitlab.svc:8075
           
       
       sidekiq:
@@ -736,7 +911,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-sidekiq
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-5.10.2
@@ -768,11 +943,25 @@ data:
         database_tasks: true
         
         
+  database_geo.yml.erb: |
+    production:
+      adapter: postgresql
+      encoding: unicode
+      database: "gitlab"
+      username: gitlab
+      password: <%= File.read("/etc/gitlab/postgres/geo-psql-password").strip.to_json %>
+      host: "gitlab-pg.svc.local"
+      port: 5432
+      # load_balancing:
+      #   hosts:
+      #     - host1.example.com
+      #     - host2.example.com
+      
   smtp_settings.rb: |
     
   resque.yml.erb: |
     production:
-      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
       
       id:
   
@@ -780,7 +969,7 @@ data:
   
   cable.yml.erb: |
     production:
-      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
       
       id:
       adapter: redis
@@ -935,7 +1124,7 @@ data:
       registry:
         enabled: true
         host: registry.127.0.0.0.nip.io
-        api_url: http://test-registry.{NAMESPACE}.svc:5000
+        api_url: http://test-registry.gitlab.svc:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
         notification_secret: <%= YAML.load_file("/etc/gitlab/registry/notificationSecret").flatten.first %>
@@ -962,7 +1151,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://test-gitaly-0.test-gitaly.{NAMESPACE}.svc:8075
+            gitaly_address: tcp://test-gitaly-0.test-gitaly.gitlab.svc:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -1012,7 +1201,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-toolbox
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: toolbox
     chart: toolbox-5.10.2
@@ -1042,11 +1231,25 @@ data:
         database_tasks: true
         
         
+  database_geo.yml.erb: |
+    production:
+      adapter: postgresql
+      encoding: unicode
+      database: "gitlab"
+      username: gitlab
+      password: <%= File.read("/etc/gitlab/postgres/geo-psql-password").strip.to_json %>
+      host: "gitlab-pg.svc.local"
+      port: 5432
+      # load_balancing:
+      #   hosts:
+      #     - host1.example.com
+      #     - host2.example.com
+      
   smtp_settings.rb: |
     
   resque.yml.erb: |
     production:
-      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
       
       id:
   
@@ -1054,7 +1257,7 @@ data:
   
   cable.yml.erb: |
     production:
-      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
       
       id:
       adapter: redis
@@ -1193,7 +1396,7 @@ data:
       registry:
         enabled: true
         host: registry.127.0.0.0.nip.io
-        api_url: http://test-registry.{NAMESPACE}.svc:5000
+        api_url: http://test-registry.gitlab.svc:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
         notification_secret: <%= YAML.load_file("/etc/gitlab/registry/notificationSecret").flatten.first %>
@@ -1220,7 +1423,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://test-gitaly-0.test-gitaly.{NAMESPACE}.svc:8075
+            gitaly_address: tcp://test-gitaly-0.test-gitaly.gitlab.svc:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -1297,7 +1500,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-webservice
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: webservice
     chart: webservice-5.10.2
@@ -1329,11 +1532,25 @@ data:
         database_tasks: true
         
         
+  database_geo.yml.erb: |
+    production:
+      adapter: postgresql
+      encoding: unicode
+      database: "gitlab"
+      username: gitlab
+      password: <%= File.read("/etc/gitlab/postgres/geo-psql-password").strip.to_json %>
+      host: "gitlab-pg.svc.local"
+      port: 5432
+      # load_balancing:
+      #   hosts:
+      #     - host1.example.com
+      #     - host2.example.com
+      
   smtp_settings.rb: |
     
   resque.yml.erb: |
     production:
-      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
       
       id:
   
@@ -1341,7 +1558,7 @@ data:
   
   cable.yml.erb: |
     production:
-      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.{NAMESPACE}.svc:6379
+      url: redis://:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/redis-password").strip) %>@test-redis-master.gitlab.svc:6379
       
       id:
       adapter: redis
@@ -1510,7 +1727,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://test-gitaly-0.test-gitaly.{NAMESPACE}.svc:8075
+            gitaly_address: tcp://test-gitaly-0.test-gitaly.gitlab.svc:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -1543,7 +1760,7 @@ data:
       registry:
         enabled: true
         host: registry.127.0.0.0.nip.io
-        api_url: http://test-registry.{NAMESPACE}.svc:5000
+        api_url: http://test-registry.gitlab.svc:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
         notification_secret: <%= YAML.load_file("/etc/gitlab/registry/notificationSecret").flatten.first %>
@@ -1575,7 +1792,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-workhorse-default
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: webservice
     chart: webservice-5.10.2
@@ -1588,7 +1805,7 @@ data:
   workhorse-config.toml.tpl: |
     shutdown_timeout = "61s"
     [redis]
-    URL = "redis://test-redis-master.{NAMESPACE}.svc:6379"
+    URL = "redis://test-redis-master.gitlab.svc:6379"
     Password = {% file.Read "/etc/gitlab/redis/redis-password" | strings.TrimSpace | data.ToJSON %}
     {%- $supported_providers := slice "AWS" "AzureRM" -%}
     {%- $provider := "" -%}
@@ -1644,7 +1861,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-webservice-tests
-  namespace: {NAMESPACE}
+  namespace: gitlab
 data:
   test_login: |
     set -e
@@ -1678,7 +1895,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-redis-scripts
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
   labels:
     app: redis
     chart: redis-11.3.4
@@ -1711,7 +1928,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-redis
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
   labels:
     app: redis
     chart: redis-11.3.4
@@ -1739,7 +1956,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-redis-health
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
   labels:
     app: redis
     chart: redis-11.3.4
@@ -1832,7 +2049,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-registry
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: registry
     chart: registry-0.7.0
@@ -1982,7 +2199,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-gitlab-chart-info
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-5.10.2
@@ -2003,7 +2220,7 @@ metadata:
     chart: gitlab-runner-0.40.0
     release: "test"
     heritage: "Helm"
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
 rules:
 - apiGroups: [""]
   resources: ["*"]
@@ -2019,7 +2236,7 @@ metadata:
     chart: gitlab-runner-0.40.0
     release: "test"
     heritage: "Helm"
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: "Role"
@@ -2027,14 +2244,14 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: test-gitlab-runner
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
 ---
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: test-gitaly
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-5.10.2
@@ -2063,7 +2280,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: test-gitlab-exporter
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-5.10.2
@@ -2089,7 +2306,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: test-gitlab-shell
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-shell
     chart: gitlab-shell-5.10.2
@@ -2115,7 +2332,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: test-webservice-default
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: webservice
     chart: webservice-5.10.2
@@ -2152,7 +2369,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: test-redis-headless
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
   labels:
     app: redis
     chart: redis-11.3.4
@@ -2174,7 +2391,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: test-redis-metrics
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
   labels:
     app: redis
     chart: redis-11.3.4
@@ -2197,7 +2414,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: test-redis-master
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
   labels:
     app: redis
     chart: redis-11.3.4
@@ -2219,7 +2436,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: test-registry
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: registry
     chart: registry-0.7.0
@@ -2293,7 +2510,7 @@ spec:
         - name: RUNNER_TAG_LIST
           value: ""
         - name: KUBERNETES_NAMESPACE
-          value: "{NAMESPACE}"
+          value: "gitlab"
         volumeMounts:
         - name: runner-secrets
           mountPath: /secrets
@@ -2328,7 +2545,7 @@ spec:
         - name: RUNNER_TAG_LIST
           value: ""
         - name: KUBERNETES_NAMESPACE
-          value: "{NAMESPACE}"
+          value: "gitlab"
         livenessProbe:
           exec:
             command: ["/bin/bash", "/configmaps/check-live"]
@@ -2378,12 +2595,227 @@ spec:
         configMap:
           name: test-gitlab-runner
 ---
+# Source: gitlab/charts/gitlab/charts/geo-logcursor/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-geo-logcursor
+  namespace: gitlab
+  labels:
+    app: geo-logcursor
+    chart: geo-logcursor-5.10.2
+    release: test
+    heritage: Helm
+    
+  annotations:
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: geo-logcursor
+      release: test
+      
+  template:
+    metadata:
+      labels:
+        app: geo-logcursor
+        release: test
+        app: geo-logcursor
+        chart: geo-logcursor-5.10.2
+        release: test
+        heritage: Helm
+        
+        
+      annotations:
+        checksum/config: 453ef3733c04a9c2d4a17897ba2f7a7a43ae366774eab536fdb74e2485aab480
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app: geo-logcursor
+                  release: test
+                  
+      initContainers:
+        
+        - name: certificates
+          image: "registry.gitlab.com/gitlab-org/build/cng/alpine-certificates:20191127-r2@sha256:367d437d024d7647432d67fb2442e3e5723af5930bad77d3535f4f8f4f8630d9"  
+          env:
+          
+          volumeMounts:
+          - name: etc-ssl-certs
+            mountPath: /etc/ssl/certs
+            readOnly: false
+          - name: custom-ca-certificates
+            mountPath: /usr/local/share/ca-certificates
+            readOnly: true
+          resources:
+            requests:
+              cpu: 50m
+        - name: configure
+          command: ['sh']
+          args: [ '-c', 'sh -x /config-logcursor/configure']
+          image: "registry.gitlab.com/gitlab-org/cloud-native/mirror/images/busybox:latest"          
+          env:
+          
+          volumeMounts:
+          
+          
+          - name: logcursor-config
+            mountPath: /config-logcursor
+            readOnly: true
+          - name: init-logcursor-secrets
+            mountPath: /init-config
+            readOnly: true
+          - name: logcursor-secrets
+            mountPath: /init-secrets
+            readOnly: false
+          resources:
+            requests:
+              cpu: 50m
+        - name: dependencies
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-geo-logcursor:v14.10.2"          
+          args:
+            - /scripts/wait-for-deps
+          env:
+            - name: GITALY_FEATURE_DEFAULT_ON
+              value: "1"
+            - name: CONFIG_TEMPLATE_DIRECTORY
+              value: '/var/opt/gitlab/templates'
+            - name: CONFIG_DIRECTORY
+              value: '/srv/gitlab/config'
+            - name: DB_SCHEMA_TARGET
+              value: 'geo'
+            
+          volumeMounts:
+            
+            - name: logcursor-config
+              mountPath: '/var/opt/gitlab/templates'
+            - name: logcursor-secrets
+              mountPath: '/etc/gitlab'
+              readOnly: true
+            - name: logcursor-secrets
+              mountPath: /srv/gitlab/config/secrets.yml
+              subPath: rails-secrets/secrets.yml
+              readOnly: true
+          resources:
+            requests:
+              cpu: 50m      
+      containers:
+        
+        - name: geo-logcursor
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-geo-logcursor:v14.10.2"          
+          env:
+            - name: GITALY_FEATURE_DEFAULT_ON
+              value: "1"
+            - name: CONFIG_TEMPLATE_DIRECTORY
+              value: '/var/opt/gitlab/templates'
+            - name: CONFIG_DIRECTORY
+              value: '/srv/gitlab/config'
+            
+          volumeMounts:
+            - name: logcursor-config
+              mountPath: '/var/opt/gitlab/templates'
+            - name: logcursor-secrets
+              mountPath: '/etc/gitlab'
+              readOnly: true
+            - name: logcursor-secrets
+              mountPath: /srv/gitlab/config/secrets.yml
+              subPath: rails-secrets/secrets.yml
+            - name: logcursor-config
+              mountPath: '/srv/gitlab/INSTALLATION_TYPE'
+              subPath: installation_type
+            - name: etc-ssl-certs
+              mountPath: /etc/ssl/certs/
+              readOnly: true
+            
+          livenessProbe:
+            exec:
+              command:
+              - /scripts/healthcheck
+            initialDelaySeconds: 20
+            periodSeconds: 60
+            timeoutSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+              - /scripts/healthcheck
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/bash", "-c", "pkill -SIGQUIT -f 'geo_log_cursor'"]
+          resources:
+            requests:
+              cpu: 300m
+              memory: 700M
+      volumes:
+      
+      
+      - name: logcursor-config
+        configMap:
+          name: test-geo-logcursor
+      - name: init-logcursor-secrets
+        projected:
+          defaultMode: 0400
+          sources:
+          - secret:
+              name: "test-rails-secret"
+              items:
+                - key: secrets.yml
+                  path: rails-secrets/secrets.yml
+          
+          
+          - secret:
+              name: "test-redis-secret"
+              items:
+                - key: "secret"
+                  path: redis/redis-password
+          - secret:
+              name: "gitlab.gitlab-pg.credentials.postgresql.acid.zalan.do"
+              items:
+                - key: "password"
+                  path: postgres/psql-password-main
+          - secret:
+              name: "gitlab.gitlab-pg.credentials.postgresql.acid.zalan.do"
+              items:
+                - key: "password"
+                  path: postgres/geo-psql-password
+      - name: logcursor-secrets
+        emptyDir:
+          medium: "Memory"
+      
+      - name: etc-ssl-certs
+        emptyDir:
+          medium: "Memory"
+      - name: custom-ca-certificates
+        projected:
+          defaultMode: 0440
+          sources:
+          - secret:
+              name: test-wildcard-tls-ca
+---
 # Source: gitlab/charts/gitlab/charts/gitlab-exporter/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-gitlab-exporter
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-5.10.2
@@ -2409,7 +2841,7 @@ spec:
         
         
       annotations:
-        checksum/config: e3bc2d06b3764a9712331c158d3853a0975d5e1ab5f59eb690d8eafcda8a4cae
+        checksum/config: 5c2e087c4e928dd8ee8aae451d75dcff3dd13ecd1710859b3f51eddf864e3eb2
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: "9168"
         gitlab.com/prometheus_path: /metrics
@@ -2577,7 +3009,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-gitlab-shell
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-shell
     chart: gitlab-shell-5.10.2
@@ -2602,8 +3034,8 @@ spec:
         
         
       annotations:
-        checksum/config: ae99199b50d3c1ce11c3fcebd206acdf7c0a526154e8fab80e535b30967588dd
-        checksum/config-sshd: 0868fcc3f0ed198424ddc52b874976974a9a6a2eb11b43770d142baee0f1ca79
+        checksum/config: c2ef2086439a16fef93973f3c2d8db452635d7ae7b874b2e197141e117d376d6
+        checksum/config-sshd: f563febc45d086fe74f4687cd91222e49cc7bb5db8d415715508a5c7536fcb64
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       initContainers:
@@ -2749,7 +3181,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-sidekiq-all-in-1-v2
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-5.10.2
@@ -2777,7 +3209,7 @@ spec:
         
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: 01d98e53650acdd7d2f3e591750185342720dd502885795f2e1c6a09693ab4c5
+        checksum/configmap: 7bd4ddf38d79aee7c6dab10d60bf64785aef8ccdb0f6ee985f6ce80b502a88d3
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: "3807"
@@ -3006,6 +3438,11 @@ spec:
                 - key: "password"
                   path: postgres/psql-password-main
           - secret:
+              name: "gitlab.gitlab-pg.credentials.postgresql.acid.zalan.do"
+              items:
+                - key: "password"
+                  path: postgres/geo-psql-password
+          - secret:
               name: "test-registry-secret"
               items:
                 - key: registry-auth.key
@@ -3070,7 +3507,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-toolbox
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: toolbox
     chart: toolbox-5.10.2
@@ -3098,7 +3535,7 @@ spec:
         
         
       annotations:
-        checksum/config: d7dcea140f83ba9bd29d6d2124eb02fae18c20ede1608fa0cea238eb8fa38c7a
+        checksum/config: 7f1edb757b7122eb0c032632ee8831c3d63224ac894987a7f56f78593534e674
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -3260,6 +3697,11 @@ spec:
                 - key: "password"
                   path: postgres/psql-password-main
           - secret:
+              name: "gitlab.gitlab-pg.credentials.postgresql.acid.zalan.do"
+              items:
+                - key: "password"
+                  path: postgres/geo-psql-password
+          - secret:
               name: "test-registry-secret"
               items:
                 - key: registry-auth.key
@@ -3329,7 +3771,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-webservice-default
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: webservice
     chart: webservice-5.10.2
@@ -3361,7 +3803,7 @@ spec:
         
         
       annotations:
-        checksum/config: ed9d023a1dde7b8c5a238125936b7c518053b8368fba37838f94e00482937b29
+        checksum/config: 9bd7baf689a97588411568d827110968cffa7bee4add55c7845c0c3615d9282e
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: "8083"
@@ -3671,6 +4113,11 @@ spec:
                 - key: "password"
                   path: postgres/psql-password-main
           - secret:
+              name: "gitlab.gitlab-pg.credentials.postgresql.acid.zalan.do"
+              items:
+                - key: "password"
+                  path: postgres/geo-psql-password
+          - secret:
               name: "test-registry-secret"
               items:
                 - key: registry-auth.key
@@ -3744,7 +4191,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-registry
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: registry
     chart: registry-0.7.0
@@ -3770,7 +4217,7 @@ spec:
         
         
       annotations:
-        checksum/configmap: 5e53fbcb4aa785e64d4bec9e63fd70e38a0f4cff2f1fc6c28c41cff8d2c509fd
+        checksum/configmap: a6439b808c149833a6cb94b29b98e9e1e02a395ec183c0b299971831a06ad06f
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       
@@ -3898,7 +4345,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: test-gitlab-shell
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab-shell
     chart: gitlab-shell-5.10.2
@@ -3923,7 +4370,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: test-sidekiq-all-in-1-v2
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-5.10.2
@@ -3948,7 +4395,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: test-webservice-default
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: webservice
     chart: webservice-5.10.2
@@ -3974,7 +4421,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: test-registry
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: registry
     chart: registry-0.7.0
@@ -3999,7 +4446,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: test-gitaly
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-5.10.2
@@ -4025,7 +4472,7 @@ spec:
         
         
       annotations:
-        checksum/config: 32c32f2526782aa2e36ed65021a71f6ec30bc3d7714f19a2bcbeed7f50fb8dcd
+        checksum/config: 50f4f51124a4e3299648b8706b736c10c585de78040d18ff5658aee885265e88
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: "9236"
         gitlab.com/prometheus_path: /metrics
@@ -4189,7 +4636,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: test-redis-master
-  namespace: "{NAMESPACE}"
+  namespace: "gitlab"
   labels:
     app: redis
     chart: redis-11.3.4
@@ -4210,8 +4657,8 @@ spec:
         release: test
         role: master
       annotations:
-        checksum/health: a2ea781b28166a416defcdfabdad7da9c79c078dfc006cfe92f30c169e1dbae0
-        checksum/configmap: 8b008b300f6981968b4ffe1323269e359332e9c8899d12a0d879dcf035b8d97d
+        checksum/health: cde8cbee359fb89146fbee4256c017b81fabe8b39dd85dfc40eeff3d2b423512
+        checksum/configmap: bd2d345e81cf16c55444806e52628d9222c5d8eca173f42508f11b026dcb9645
         checksum/secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         prometheus.io/port: "9121"
         prometheus.io/scrape: "true"
@@ -4347,7 +4794,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: test-migrations-1
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: migrations
     chart: migrations-5.10.2
@@ -4415,7 +4862,7 @@ spec:
           image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ee:v14.10.2"
           args:
             - /scripts/wait-for-deps
-            - /scripts/db-migrate          
+            - /scripts/geo-db-migrate          
           env:
             - name: CONFIG_TEMPLATE_DIRECTORY
               value: '/var/opt/gitlab/templates'
@@ -4423,6 +4870,8 @@ spec:
               value: '/srv/gitlab/config'
             - name: BYPASS_SCHEMA_VERSION
               value: 'true'
+            - name: DB_SCHEMA_TARGET
+              value: 'geo'
             - name: ENABLE_BOOTSNAP
               value: '1'
             
@@ -4483,6 +4932,11 @@ spec:
                 - key: "password"
                   path: postgres/psql-password-main
           - secret:
+              name: "gitlab.gitlab-pg.credentials.postgresql.acid.zalan.do"
+              items:
+                - key: "password"
+                  path: postgres/geo-psql-password
+          - secret:
               name: "test-gitlab-initial-root-password"
               items:
                 - key: "password"
@@ -4511,7 +4965,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: test-webservice-default
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: webservice
     chart: webservice-5.10.2
@@ -4547,7 +5001,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: test-registry
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: registry
     chart: registry-0.7.0
@@ -4582,7 +5036,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: test-shared-secrets
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-5.10.2
@@ -4599,7 +5053,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-shared-secrets
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-5.10.2
@@ -4614,7 +5068,7 @@ data:
   generate-secrets: |
     # vim: set filetype=sh:
     
-    namespace={NAMESPACE}
+    namespace=gitlab
     release=test
     env=production
     
@@ -4785,7 +5239,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-gitlab-upgrade-check
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-5.10.2
@@ -4880,7 +5334,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: test-shared-secrets
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-5.10.2
@@ -4901,7 +5355,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: test-shared-secrets
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-5.10.2
@@ -4919,14 +5373,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: test-shared-secrets
-    namespace: {NAMESPACE}
+    namespace: gitlab
 ---
 # Source: gitlab/charts/gitlab/charts/webservice/templates/tests/test-runner.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: test-webservice-test-runner-nsqxw
-  namespace: {NAMESPACE}
+  name: test-webservice-test-runner-roqqe
+  namespace: gitlab
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
@@ -4958,8 +5412,8 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-shared-secrets-1-4fg
-  namespace: {NAMESPACE}
+  name: test-shared-secrets-1-5p1
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-5.10.2
@@ -5011,8 +5465,8 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-shared-secrets-1-ycq-selfsign
-  namespace: {NAMESPACE}
+  name: test-shared-secrets-1-mnr-selfsign
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-5.10.2
@@ -5044,7 +5498,7 @@ spec:
         - name: CA_SUBJECT
           value: "GitLab Helm Chart" # defaults to GitLab in container
         - name: CA_ORG
-          value: "{NAMESPACE}" # defaults to GitLab in container
+          value: "gitlab" # defaults to GitLab in container
         - name: CA_ORG_UNIT
           value: "test" # defaults to Cloud Native in container
         - name: CERT_SUBJECT
@@ -5108,7 +5562,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: test-gitlab-upgrade-check
-  namespace: {NAMESPACE}
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-5.10.2
