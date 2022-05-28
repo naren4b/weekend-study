@@ -67,6 +67,12 @@ kind create cluster --name demo-cluster --config secure-ingress-e2e-demo-config.
 k get nodes -o wide 
 
 ```  
+
+# Get a minikube cluster 
+```
+minikube start --driver=docker
+```
+
                                                
 # Install ingress controller 
 - 1 Nginx 
@@ -81,7 +87,7 @@ set the nodeSelector
 ```
 
 - 2 HaproxyTech
-#TODO
+
 
 # Create a Sample Application 
 
