@@ -1,0 +1,511 @@
+defaultRules:
+  create: false
+
+global:
+  rbac:
+    create: true
+    createAggregateClusterRoles: false
+    pspEnabled: false
+    pspAnnotations: {}
+  imagePullSecrets:
+    - name: "dacsecret"
+    
+kube-prometheus-stack:
+  alertmanager:
+    enabled: false
+
+  grafana:
+    image:
+      repository: registry.dac.nokia.com/public/grafana/grafana
+      tag: "8.5.3"
+    enabled: true
+    testFramework:
+      enabled: false
+    rbac:
+      pspEnabled: false
+    ingress:
+      enabled: false
+    defaultDashboardsEnabled: false
+    sidecar:
+      image:
+        repository: registry.dac.nokia.com/public/quay.io/kiwigrid/k8s-sidecar
+        tag: 1.15.6
+      dashboards:
+        enabled: false
+      datasources:
+        enabled: true
+        defaultDatasourceEnabled: true
+        uid: prometheus
+        createPrometheusReplicasDatasources: false
+        label: grafana_datasource
+        labelValue: "1"
+    service:
+      portName: http-web
+    serviceMonitor:
+      enabled: false
+      path: "/metrics"
+      labels: {}
+      interval: ""
+      scheme: http
+      tlsConfig: {}
+      scrapeTimeout: 30s
+
+  kubeApiServer:
+    enabled: true
+    tlsConfig:
+      serverName: kubernetes
+      insecureSkipVerify: false
+    serviceMonitor:
+      interval: ""
+      proxyUrl: ""
+      jobLabel: component
+      selector:
+        matchLabels:
+          component: apiserver
+          provider: kubernetes
+      metricRelabelings: []
+      relabelings: []
+  kubelet:
+    enabled: true
+    namespace: kube-system
+    serviceMonitor:
+      interval: ""
+      proxyUrl: ""
+      https: true
+      cAdvisor: true
+      probes: true
+      resource: false
+      resourcePath: "/metrics/resource/v1alpha1"
+      cAdvisorMetricRelabelings: []
+      probesMetricRelabelings: []
+      cAdvisorRelabelings:
+        - sourceLabels: [__metrics_path__]
+          targetLabel: metrics_path
+      probesRelabelings:
+        - sourceLabels: [__metrics_path__]
+          targetLabel: metrics_path
+      resourceRelabelings:
+        - sourceLabels: [__metrics_path__]
+          targetLabel: metrics_path
+      metricRelabelings: []
+      relabelings:
+        - sourceLabels: [__metrics_path__]
+          targetLabel: metrics_path
+  kubeControllerManager:
+    enabled: false
+  coreDns:
+    enabled: false
+  kubeDns:
+    enabled: false
+  kubeEtcd:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+  kubeStateMetrics:
+    enabled: true
+  kube-state-metrics:
+    image:
+      repository: registry.dac.nokia.com/public/registry.k8s.io/kube-state-metrics/kube-state-metrics
+      tag: v2.5.0
+    namespaceOverride: ""
+    rbac:
+      create: true
+    releaseLabel: true
+    prometheus:
+      monitor:
+        enabled: true
+        interval: ""
+        scrapeTimeout: ""
+        proxyUrl: ""
+        honorLabels: true
+        metricRelabelings: []
+        relabelings: []
+    selfMonitor:
+      enabled: false
+  nodeExporter:
+    enabled: true
+  prometheus-node-exporter:
+    image:
+      repository: registry.dac.nokia.com/public/quay.io/prometheus/node-exporter
+      tag: v1.3.1
+    namespaceOverride: ""
+    podLabels:
+      jobLabel: node-exporter
+    extraArgs:
+      - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
+      - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
+    service:
+      portName: http-metrics
+    prometheus:
+      monitor:
+        enabled: true
+        jobLabel: jobLabel
+        interval: ""
+        scrapeTimeout: ""
+        proxyUrl: ""
+        metricRelabelings: []
+        relabelings: []
+    rbac:
+      pspEnabled: false
+  prometheusOperator:
+    enabled: true
+    tls:
+      enabled: true
+      tlsMinVersion: VersionTLS13
+      internalPort: 10250
+    admissionWebhooks:
+      failurePolicy: Fail
+      enabled: true
+      caBundle: ""
+      patch:
+        enabled: true
+        image:
+          repository: registry.dac.nokia.com/public/k8s.gcr.io/ingress-nginx/kube-webhook-certgen
+          tag: v1.1.1
+          sha: ""
+          pullPolicy: IfNotPresent
+        resources: {}
+        priorityClassName: ""
+        podAnnotations: {}
+        nodeSelector: {}
+        affinity: {}
+        tolerations: []
+        securityContext:
+          runAsGroup: 2000
+          runAsNonRoot: true
+          runAsUser: 2000
+      certManager:
+        enabled: false
+        rootCert:
+          duration: "" # default to be 5y
+        admissionCert:
+          duration: "" # default to be 1y
+    namespaces: {}
+    denyNamespaces: []
+    alertmanagerInstanceNamespaces: []
+    prometheusInstanceNamespaces: []
+    thanosRulerInstanceNamespaces: []
+    serviceAccount:
+      create: true
+      name: ""
+    service:
+      annotations: {}
+      labels: {}
+      clusterIP: ""
+      nodePort: 30080
+      nodePortTls: 30443
+      additionalPorts: []
+      loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+      externalTrafficPolicy: Cluster
+      type: ClusterIP
+      externalIPs: []
+    podLabels: {}
+    podAnnotations: {}
+    kubeletService:
+      enabled: true
+      namespace: kube-system
+      name: ""
+    serviceMonitor:
+      interval: ""
+      scrapeTimeout: ""
+      selfMonitor: true
+      metricRelabelings: []
+      relabelings: []
+    resources: {}
+    hostNetwork: false
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    dnsConfig: {}
+    securityContext:
+      fsGroup: 65534
+      runAsGroup: 65534
+      runAsNonRoot: true
+      runAsUser: 65534
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+    image:
+      repository: registry.dac.nokia.com/public/quay.io/prometheus-operator/prometheus-operator
+      tag: v0.57.0
+      sha: ""
+      pullPolicy: IfNotPresent
+    prometheusConfigReloader:
+      image:
+        repository: registry.dac.nokia.com/public/quay.io/prometheus-operator/prometheus-config-reloader
+        tag: v0.57.0
+        sha: ""
+      resources:
+        requests:
+          cpu: 200m
+          memory: 50Mi
+        limits:
+          cpu: 200m
+          memory: 50Mi
+
+    thanosImage:
+      repository: registry.dac.nokia.com/public/quay.io/thanos/thanos
+      tag: v0.25.2
+      sha: ""
+    secretFieldSelector: ""
+  prometheus:
+    enabled: true
+    annotations: {}
+    serviceAccount:
+      create: true
+      name: ""
+      annotations: {}
+    thanosService:
+      enabled: false
+      annotations: {}
+      labels: {}
+      externalTrafficPolicy: Cluster
+      type: ClusterIP
+      portName: grpc
+      port: 10901
+      targetPort: "grpc"
+      httpPortName: http
+      httpPort: 10902
+      targetHttpPort: "http"
+      clusterIP: "None"
+      nodePort: 30901
+      httpNodePort: 30902
+    thanosServiceMonitor:
+      enabled: false
+      interval: ""
+      scheme: ""
+      tlsConfig: {}
+      bearerTokenFile:
+      metricRelabelings: []
+      relabelings: []
+    thanosServiceExternal:
+      enabled: false
+      annotations: {}
+      labels: {}
+      loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+      portName: grpc
+      port: 10901
+      targetPort: "grpc"
+      httpPortName: http
+      httpPort: 10902
+      targetHttpPort: "http"
+      externalTrafficPolicy: Cluster
+      type: LoadBalancer
+      nodePort: 30901
+      httpNodePort: 30902
+    service:
+      annotations: {}
+      labels: {}
+      clusterIP: ""
+      port: 9090
+      targetPort: 9090
+      externalIPs: []
+      nodePort: 30090
+      loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+      externalTrafficPolicy: Cluster
+      type: ClusterIP
+      additionalPorts: []
+      publishNotReadyAddresses: false
+      sessionAffinity: ""
+    servicePerReplica:
+      enabled: false
+      annotations: {}
+      port: 9090
+      targetPort: 9090
+      nodePort: 30091
+      loadBalancerSourceRanges: []
+      externalTrafficPolicy: Cluster
+      type: ClusterIP
+    podDisruptionBudget:
+      enabled: false
+      minAvailable: 1
+      maxUnavailable: ""
+    thanosIngress:
+      enabled: false
+      annotations: {}
+      labels: {}
+      servicePort: 10901
+      nodePort: 30901
+      hosts: []
+      paths: []
+      tls: []
+    extraSecret:
+      annotations: {}
+      data: {}
+    ingress:
+      enabled: false
+      annotations: {}
+      labels: {}
+      hosts: []
+      paths: []
+      tls: []
+    ingressPerReplica:
+      enabled: false
+      annotations: {}
+      labels: {}
+      hostPrefix: ""
+      hostDomain: ""
+      paths: []
+      tlsSecretName: ""
+      tlsSecretPerReplica:
+        enabled: false
+        prefix: "prometheus"
+    podSecurityPolicy:
+      allowedCapabilities: []
+      allowedHostPaths: []
+      volumes: []
+
+    serviceMonitor:
+      interval: ""
+      selfMonitor: true
+      scheme: ""
+      tlsConfig: {}
+      bearerTokenFile:
+      metricRelabelings: []
+      relabelings: []
+    prometheusSpec:
+      disableCompaction: false
+      apiserverConfig: {}
+      scrapeInterval: ""
+      scrapeTimeout: ""
+      evaluationInterval: ""
+      listenLocal: false
+      enableAdminAPI: false
+      web: {}
+      enableFeatures: []
+      image:
+        repository: registry.dac.nokia.com/public/quay.io/prometheus/prometheus
+        tag: v2.36.1
+        sha: ""
+      tolerations: []
+      topologySpreadConstraints: []
+      alertingEndpoints: []
+      externalLabels:
+        edgeid: x_{{"{{"}}.edgeid{{"}}"}}
+        nhgid: x_{{"{{"}}.nhgid{{"}}"}}
+        edge: x_{{"{{"}}.edge_hostname{{"}}"}}
+        accountid: x_{{"{{"}}.account_id{{"}}"}}
+        env: x_{{"{{"}}.edgeid{{"}}"}}
+      enableRemoteWriteReceiver: false
+      replicaExternalLabelName: ""
+      replicaExternalLabelNameClear: false
+      prometheusExternalLabelName: ""
+      prometheusExternalLabelNameClear: false
+      externalUrl: ""
+      nodeSelector: {}
+      secrets: []
+      configMaps: []
+      query: {}
+      ruleNamespaceSelector: {}
+      ruleSelectorNilUsesHelmValues: true
+      ruleSelector: {}
+      serviceMonitorSelectorNilUsesHelmValues: true
+      serviceMonitorSelector: {}
+      serviceMonitorNamespaceSelector: {}
+      podMonitorSelectorNilUsesHelmValues: true
+      podMonitorSelector: {}
+      podMonitorNamespaceSelector: {}
+      probeSelectorNilUsesHelmValues: true
+      probeSelector: {}
+      probeNamespaceSelector: {}
+      retention: 10d
+      retentionSize: ""
+      walCompression: false
+      paused: false
+      replicas: 1
+      shards: 1
+      logLevel: info
+      logFormat: logfmt
+      routePrefix: /
+      podMetadata: {}
+      podAntiAffinity: ""
+      podAntiAffinityTopologyKey: kubernetes.io/hostname
+      affinity: {}
+      remoteRead: []
+      additionalRemoteRead: []
+      remoteWrite:
+        - url: https://vmi.metrics.edge.{{"{{"}}.dc{{"}}"}}/insert/0/prometheus
+          remote_timeout: 30s
+          # headers:
+          #   <string>: <string> ...
+          write_relabel_configs:
+            - source_labels: [__name__, pod, instance]
+              regex: "(.*)mcn_(.+)"
+              action: keep
+            - action: labeldrop
+              regex: "pod"
+            - action: labeldrop
+              regex: "instance"
+          name: <string>
+          tls_config:
+            ca_file: /etc/prometheus/certs/ca.crt
+            cert_file: /etc/prometheus/certs/ca.crt
+            key_file: /etc/prometheus/certs/ca.crt
+            # server_name: <string>
+            # insecure_skip_verify: <boolean>
+            # min_version: <string>
+          queue_config:
+            capacity: 2500
+            max_shards: 2
+            min_shards: 1
+            max_samples_per_send: 500
+            batch_send_deadline: 5s
+            min_backoff: 30ms
+            max_backoff: 5s
+            # retry_on_http_429: <boolean> | default = false
+          metadata_config:
+            send: true
+            send_interval: 1m
+            max_samples_per_send: 500
+      additionalRemoteWrite: []
+      remoteWriteDashboards: false
+      resources: {}
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: platform
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 900M
+      volumes: []
+      volumeMounts: []
+      additionalScrapeConfigs: []
+      additionalScrapeConfigsSecret: {}
+      additionalPrometheusSecretsAnnotations: {}
+      additionalAlertManagerConfigs: []
+      additionalAlertManagerConfigsSecret: {}
+      additionalAlertRelabelConfigs: []
+      additionalAlertRelabelConfigsSecret: {}
+      securityContext:
+        runAsGroup: 2000
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 2000
+      priorityClassName: ""
+      thanos: {}
+      containers: []
+      initContainers: []
+      portName: "http-web"
+      arbitraryFSAccessThroughSMs: false
+      overrideHonorLabels: false
+      overrideHonorTimestamps: false
+      ignoreNamespaceSelectors: false
+      enforcedNamespaceLabel: ""
+      prometheusRulesExcludedFromEnforce: []
+      excludedFromEnforcement: []
+      queryLogFile: false
+      enforcedSampleLimit: false
+      enforcedTargetLimit: false
+      enforcedLabelLimit: false
+      enforcedLabelNameLengthLimit: false
+      enforcedLabelValueLengthLimit: false
+      allowOverlappingBlocks: false
+    additionalRulesForClusterRole: []
+    additionalServiceMonitors: []
+    additionalPodMonitors: []
