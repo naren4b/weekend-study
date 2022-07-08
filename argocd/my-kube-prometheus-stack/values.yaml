@@ -468,7 +468,7 @@ kube-prometheus-stack:
       storageSpec:
         volumeClaimTemplate:
           spec:
-            storageClassName: platform
+            storageClassName: local-path
             accessModes: ["ReadWriteOnce"]
             resources:
               requests:

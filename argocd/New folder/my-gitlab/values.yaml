@@ -1,0 +1,46 @@
+global:
+  storageClass: local-path
+  hosts: 
+    domain: 10.181.136.59.nip.io  #TODO
+    externalIP: 10.181.136.59 #TODO
+  certmanager:
+    installCRDs: false
+    install: false    
+  ingress:
+    apiVersion: "networking.k8s.io/v1"
+    configureCertmanager: false
+    provider: nginx
+    annotations: {}
+    enabled: true
+    tls: {}
+    path: /
+    pathType: Prefix
+    class: nginx    
+gitlab:    
+ certmanager-issuer:
+   email: test.cicd@ndac.com #TODO
+ webservice:
+  helmTests:
+   enabled: false
+ gitaly:
+  persistence:
+    storageClass: local-path # TODO
+    size: 5Gi #TODO
+ minio:
+   persistence:
+      storageClass: local-path # TODO
+      size: 7Gi #TODO
+ prometheus:
+   install: false   
+ ingress:
+    enabled: true
+    class: nginx
+ nginx-ingress:
+  enabled: false
+ certmanager:  
+    installCRDs: false
+    install: false  
+postgresql:
+  persistence:
+    storageClass: local-path # TODO
+    size: 8Gi #TODO  
