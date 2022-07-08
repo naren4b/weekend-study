@@ -1,3 +1,17 @@
+
+# Install gitlab with helm e2e 
+
+
+|Reference                    | Website                                                                                      |
+|---------------------------- |----------------------------------------------------------------------------------------------|
+|Gitlab                       | https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/                                   |
+|Minikube                     | https://minikube.sigs.k8s.io/docs/start/                                                     |
+|Geo                          | https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/doc/advanced/geo                   |
+|advanced/geo                 | https://docs.gitlab.com/charts/advanced/geo/                                                 |
+|Installing GitLab using Helm | https://docs.gitlab.com/charts/installation/index.html                                       |
+|Offline Gitlab               | https://docs.gitlab.com/ee/topics/offline/quick_start_guide.html                             |
+|Geo Constraint               | https://docs.gitlab.com/ee/install/requirements.html#additional-requirements-for-gitlab-geo  |
+
 # Installation instruction 
 
 #### 1. Install a kubernetes cluster 
@@ -65,4 +79,6 @@ DNS=$(cat test-gitlab/values.yaml | grep domain | awk '{print $2}' | sed 's/.*/g
 echo https://${DNS}
 
 ```
+
+
 

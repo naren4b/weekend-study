@@ -1,8 +1,0 @@
-apiVersion: v1
-data:
-  connection: cHJvdmlkZXI6IEFXUw0KcmVnaW9uOiB1cy1lYXN0LTENCmF3c19hY2Nlc3Nfa2V5X2lkOiBCT0dVU19BQ0NFU1NfS0VZDQphd3Nfc2VjcmV0X2FjY2Vzc19rZXk6IEJPR1VTX1NFQ1JFVF9LRVkNCg==
-kind: Secret
-metadata:
-  creationTimestamp: null
-  name: objectstore-uploads
-  namespace: gitlab
