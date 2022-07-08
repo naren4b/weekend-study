@@ -236,7 +236,7 @@ data:
         Path = "gitlab-runner"
         Shared = true
         [runners.cache.s3]
-          ServerAddress = "minio.10.181.136.59.nip.io"
+          ServerAddress = "minio.127.0.0.1.nip.io"
           BucketName = "runner-cache"
           BucketLocation = "us-east-1"
           Insecure = false
@@ -737,7 +737,7 @@ metadata:
     heritage: Helm
     
 data:
-  pages_redirect_uri: https://projects.pages.10.181.136.59.nip.io/auth
+  pages_redirect_uri: https://projects.pages.127.0.0.1.nip.io/auth
   installation_type: |
     gitlab-helm-chart
   database.yml.erb: |
@@ -782,7 +782,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.10.181.136.59.nip.io
+        host: gitlab.127.0.0.1.nip.io
       gitaly:
         client_path: /home/git/gitaly/bin
         token: <%= File.read('/etc/gitlab/gitaly/gitaly_token').strip.to_json %>
@@ -874,7 +874,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.10.181.136.59.nip.io
+        host: gitlab.127.0.0.1.nip.io
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -895,9 +895,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@10.181.136.59.nip.io"
+        email_from: "gitlab@127.0.0.1.nip.io"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@10.181.136.59.nip.io"
+        email_reply_to: "noreply@127.0.0.1.nip.io"
         email_subject_suffix: ""
       
       gravatar:
@@ -919,7 +919,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -933,7 +933,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -947,7 +947,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -961,7 +961,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1005,7 +1005,7 @@ data:
         access_control: false
         artifacts_server: true
         path: /srv/gitlab/shared/pages
-        host: pages.10.181.136.59.nip.io
+        host: pages.127.0.0.1.nip.io
         port: 443
         https: true
         secret_file: /etc/gitlab/pages/secret
@@ -1017,7 +1017,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1030,7 +1030,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.10.181.136.59.nip.io
+        host: registry.127.0.0.1.nip.io
         api_url: http://test-registry.gitlab.svc:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -1065,7 +1065,7 @@ data:
       gitlab_kas:
         enabled: true
         secret_file: /etc/gitlab/kas/.gitlab_kas_secret
-        external_url: "wss://kas.10.181.136.59.nip.io"
+        external_url: "wss://kas.127.0.0.1.nip.io"
         internal_url: "grpc://test-kas.gitlab.svc:8153"
       gitlab_shell:
         path: /home/git/gitlab-shell/
@@ -1164,7 +1164,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.10.181.136.59.nip.io
+        host: gitlab.127.0.0.1.nip.io
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -1185,9 +1185,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@10.181.136.59.nip.io"
+        email_from: "gitlab@127.0.0.1.nip.io"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@10.181.136.59.nip.io"
+        email_reply_to: "noreply@127.0.0.1.nip.io"
         email_subject_suffix: ""
       
       artifacts:
@@ -1199,7 +1199,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1213,7 +1213,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1227,7 +1227,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1241,7 +1241,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1279,7 +1279,7 @@ data:
         access_control: false
         artifacts_server: true
         path: /srv/gitlab/shared/pages
-        host: pages.10.181.136.59.nip.io
+        host: pages.127.0.0.1.nip.io
         port: 443
         https: true
         secret_file: /etc/gitlab/pages/secret
@@ -1291,7 +1291,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1304,7 +1304,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.10.181.136.59.nip.io
+        host: registry.127.0.0.1.nip.io
         api_url: http://test-registry.gitlab.svc:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -1339,7 +1339,7 @@ data:
       gitlab_kas:
         enabled: true
         secret_file: /etc/gitlab/kas/.gitlab_kas_secret
-        external_url: "wss://kas.10.181.136.59.nip.io"
+        external_url: "wss://kas.127.0.0.1.nip.io"
         internal_url: "grpc://test-kas.gitlab.svc:8153"
       gitlab_shell:
         path: /home/git/gitlab-shell/
@@ -1380,8 +1380,8 @@ data:
     access_key = $(cat /init-secrets/minio/accesskey)
     secret_key = $(cat /init-secrets/minio/secretkey)
     bucket_location = us-east-1
-    host_base = minio.10.181.136.59.nip.io
-    host_bucket = minio.10.181.136.59.nip.io/%(bucket)
+    host_base = minio.127.0.0.1.nip.io
+    host_bucket = minio.127.0.0.1.nip.io/%(bucket)
     default_mime_type = binary/octet-stream
     enable_multipart = True
     multipart_max_chunks = 10000
@@ -1394,7 +1394,7 @@ data:
     socket_timeout = 300
     use_mime_magic = False
     verbosity = WARNING
-    website_endpoint = https://minio.10.181.136.59.nip.io
+    website_endpoint = https://minio.127.0.0.1.nip.io
     EOF
     else
       mv "/${secret_dir}/objectstorage/.s3cfg" "/${secret_dir}/.s3cfg"
@@ -1467,7 +1467,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.10.181.136.59.nip.io
+        host: gitlab.127.0.0.1.nip.io
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -1488,9 +1488,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@10.181.136.59.nip.io"
+        email_from: "gitlab@127.0.0.1.nip.io"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@10.181.136.59.nip.io"
+        email_reply_to: "noreply@127.0.0.1.nip.io"
         email_subject_suffix: ""
       
       gravatar:
@@ -1512,7 +1512,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1526,7 +1526,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1540,7 +1540,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1554,7 +1554,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1597,7 +1597,7 @@ data:
         access_control: false
         artifacts_server: true
         path: /srv/gitlab/shared/pages
-        host: pages.10.181.136.59.nip.io
+        host: pages.127.0.0.1.nip.io
         port: 443
         https: true
         secret_file: /etc/gitlab/pages/secret
@@ -1609,7 +1609,7 @@ data:
           connection:
             provider: AWS
             region: us-east-1
-            host: minio.10.181.136.59.nip.io
+            host: minio.127.0.0.1.nip.io
             endpoint: http://test-minio-svc.gitlab.svc:9000
             path_style: true
             aws_access_key_id: <%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>
@@ -1649,7 +1649,7 @@ data:
       gitlab_kas:
         enabled: true
         secret_file: /etc/gitlab/kas/.gitlab_kas_secret
-        external_url: "wss://kas.10.181.136.59.nip.io"
+        external_url: "wss://kas.127.0.0.1.nip.io"
         internal_url: "grpc://test-kas.gitlab.svc:8153"
       gitlab_shell:
         path: /home/git/gitlab-shell/
@@ -1678,7 +1678,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.10.181.136.59.nip.io
+        host: registry.127.0.0.1.nip.io
         api_url: http://test-registry.gitlab.svc:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -1686,7 +1686,7 @@ data:
       smartcard:
         enabled: false
         ca_file: '/etc/gitlab/rails-secrets/smartcard-ca.crt'
-        client_certificate_required_host: smartcard.10.181.136.59.nip.io
+        client_certificate_required_host: smartcard.127.0.0.1.nip.io
         client_certificate_required_port: 443
         san_extensions: false
         required_for_git_access: false
@@ -1789,7 +1789,7 @@ data:
   test_login: |
     set -e
     echo 'Start Test'
-    endpoint="https://gitlab.10.181.136.59.nip.io"
+    endpoint="https://gitlab.127.0.0.1.nip.io"
     cookie_read="-c /tmp/test_login.cookie"
     cookie_readwrite="$cookie_read -b /tmp/test_login.cookie"
 
@@ -2288,7 +2288,7 @@ data:
         threshold: 3
     auth:
       token:
-        realm: https://gitlab.10.181.136.59.nip.io/jwt/auth
+        realm: https://gitlab.127.0.0.1.nip.io/jwt/auth
         service: container_registry
         issuer: "gitlab-issuer"
         # This is provided from the initContainer execution, at a known path.
@@ -2811,7 +2811,7 @@ spec:
         release: "test"
         heritage: "Helm"
       annotations:
-        checksum/configmap: dd0c8d65aef9428eab4494c227a256239ee51ab53bd09b770cf98e34f169a337
+        checksum/configmap: 306dedb7d5f74bb82c1a4c642856a3ade53265a5061f571a3978184337379500
         checksum/secrets: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         gitlab.com/prometheus_port: "9252"
         gitlab.com/prometheus_scrape: "true"
@@ -2833,7 +2833,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://gitlab.10.181.136.59.nip.io
+          value: https://gitlab.127.0.0.1.nip.io
         - name: CLONE_URL
           value: ""
         - name: RUNNER_EXECUTOR
@@ -3451,7 +3451,7 @@ spec:
         
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: 296a0fe42bfb9eb629f982fa37d3265c4fa980b127c8413643dafedb3b8a913d
+        checksum/configmap: 060fee30d1778b5abedcfdb428cc26aecfc1379204b62169d8ff1097ae9d5229
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: "3807"
@@ -3766,7 +3766,7 @@ spec:
         
         
       annotations:
-        checksum/config: 74d7447eb8c8e0829f6f5f1f086d7cb6bdd4d661a303b2e87cf8bb0789f962f2
+        checksum/config: cc0bd630f03e9bc4f876e7b58b5e54662e1e4b1f1d2f17bb3df59e49fc32aeb0
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -4018,7 +4018,7 @@ spec:
         
         
       annotations:
-        checksum/config: e8428dce5b4a5c260d23b0667d258f8b1cb4280db1f439d2d81037f06c5b12f4
+        checksum/config: 653e14ff3d9534eccc3cad3752d75b86b83eaf38cc6c730b078c2d26567c1aac
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: "8083"
@@ -4523,7 +4523,7 @@ spec:
         
         
       annotations:
-        checksum/configmap: 0520ec5df560bbe85113a55a47c7290af6de370d95110ea8cb7e6cbd4c51a559
+        checksum/configmap: 70c49f5bc8a3072bf86d1c7d605bb1cd02a15e39a8cdefdc3d9f60077795f300
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       
@@ -5531,7 +5531,7 @@ metadata:
 spec:
   ingressClassName: "nginx"
   rules:
-    - host: kas.10.181.136.59.nip.io
+    - host: kas.127.0.0.1.nip.io
       http:
         paths:
           - path: "/"
@@ -5550,7 +5550,7 @@ spec:
                   number: 8154
   tls:
     - hosts:
-      - kas.10.181.136.59.nip.io
+      - kas.127.0.0.1.nip.io
       secretName: test-wildcard-tls
 ---
 # Source: test-gitlab/charts/gitlab/charts/gitlab/charts/webservice/templates/ingress.yaml
@@ -5577,7 +5577,7 @@ metadata:
 spec:
   ingressClassName: "nginx"
   rules:
-    - host: gitlab.10.181.136.59.nip.io
+    - host: gitlab.127.0.0.1.nip.io
       http:
         paths:
           - path: /
@@ -5589,7 +5589,7 @@ spec:
                     number: 8181
   tls:
     - hosts:
-      - gitlab.10.181.136.59.nip.io
+      - gitlab.127.0.0.1.nip.io
       secretName: test-wildcard-tls
 ---
 # Source: test-gitlab/charts/gitlab/charts/minio/templates/ingress.yaml
@@ -5615,7 +5615,7 @@ metadata:
 spec:
   ingressClassName: "nginx"
   rules:
-    - host: minio.10.181.136.59.nip.io
+    - host: minio.127.0.0.1.nip.io
       http:
         paths:
           - path: /
@@ -5627,7 +5627,7 @@ spec:
                     number: 9000
   tls:
     - hosts:
-      - minio.10.181.136.59.nip.io
+      - minio.127.0.0.1.nip.io
       secretName: test-wildcard-tls
 ---
 # Source: test-gitlab/charts/gitlab/charts/registry/templates/ingress.yaml
@@ -5653,7 +5653,7 @@ metadata:
 spec:
   ingressClassName: "nginx"
   rules:
-    - host: registry.10.181.136.59.nip.io
+    - host: registry.127.0.0.1.nip.io
       http:
         paths:
           - path: /
@@ -5665,7 +5665,7 @@ spec:
                   number:  5000
   tls:
     - hosts:
-      - registry.10.181.136.59.nip.io
+      - registry.127.0.0.1.nip.io
       secretName: test-wildcard-tls
 ---
 # Source: test-gitlab/charts/gitlab/templates/shared-secrets/rbac-config.yaml
@@ -6025,7 +6025,7 @@ subjects:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: test-webservice-test-runner-mrtbv
+  name: test-webservice-test-runner-0nbpo
   namespace: gitlab
   annotations:
     "helm.sh/hook": test
@@ -6058,7 +6058,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-shared-secrets-1-ghr
+  name: test-shared-secrets-1-oif
   namespace: gitlab
   labels:
     app: gitlab
@@ -6111,7 +6111,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-shared-secrets-1-80l-selfsign
+  name: test-shared-secrets-1-yhb-selfsign
   namespace: gitlab
   labels:
     app: gitlab
@@ -6148,9 +6148,9 @@ spec:
         - name: CA_ORG_UNIT
           value: "test" # defaults to Cloud Native in container
         - name: CERT_SUBJECT
-          value: "10.181.136.59.nip.io" # defaults to GitLab in container
+          value: "127.0.0.1.nip.io" # defaults to GitLab in container
         - name: CERT_DOMAIN
-          value: "10.181.136.59.nip.io" # defaults to example.com in container
+          value: "127.0.0.1.nip.io" # defaults to example.com in container
         - name: EXPIRY
           value: "3650d" # defaults to 8076h in container
         - name: ALGORITHM
@@ -6186,9 +6186,9 @@ spec:
           kubectl --namespace=$namespace label --overwrite \
             secret ${certname}-ca app=gitlab chart=gitlab-6.1.2 release=test heritage=Helm 
           # create certificate chain for GitLab Runner
-          cat /output/ca.pem /output/wildcard.pem > /tmp/gitlab.10.181.136.59.nip.io.crt
+          cat /output/ca.pem /output/wildcard.pem > /tmp/gitlab.127.0.0.1.nip.io.crt
           kubectl create secret generic ${certname}-chain \
-            --from-file=/tmp/gitlab.10.181.136.59.nip.io.crt || true
+            --from-file=/tmp/gitlab.127.0.0.1.nip.io.crt || true
           kubectl --namespace=$namespace label \
             secret ${certname}-chain  $(echo 'app.kubernetes.io/name=test' | sed -E 's/=[^ ]*/-/g')
           kubectl --namespace=$namespace label --overwrite \
