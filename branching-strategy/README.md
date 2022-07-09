@@ -1,4 +1,5 @@
 # Trunk-Based development
+![TBD](https://images.prismic.io/launchdarkly/7ad744e0-5c46-4a2f-b08d-6013a95e89c5_TrunkBasedDev-02+%283%29.png?auto=compress,format)
   - Single main branch 
   - Individual developer commits there code to the main branch anytime 
   - High Team maturity
@@ -10,7 +11,7 @@
   - It is simple and straight forward way have merging 
    
 # Feature branches or GitHub Flow
-[](./img/feature-branching-image.JPG)
+![feature-branching-image](https://docs.microsoft.com/en-us/azure/devops/repos/git/media/branching-guidance/featurebranching.png?view=azure-devops)
   - One branch per feature 
   - Short delivery cycles 
   - It is Continuos Delivery 
@@ -27,6 +28,7 @@
   - Same complexity level as that of Feature branching-strategy
 
 # Release branches
+![releasebranching_release](https://docs.microsoft.com/en-us/azure/devops/repos/git/media/branching-guidance/releasebranching_release.png?view=azure-devops)
   - One branch per release 
   - Relatively Longer cycle Merge compare to feature branch 
   - Complexity high while merging for different release branches 
@@ -44,3 +46,8 @@
   - This strategy doesn't understand we never deploy source code to any environment we deploy releases and that gets deployed to env
   - High Complexity 
 
+
+_ref_: 
+ - _1.https://docs.microsoft.com/en-us/azure/devops/repos/git/git-branching-guidance?view=azure-devops_
+ - _2.https://dev.to/arbitrarybytes/comparing-git-branching-strategies-dl4_
+ - _3.https://launchdarkly.com/blog/git-branching-strategies-vs-trunk-based-development/_
