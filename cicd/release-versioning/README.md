@@ -18,4 +18,6 @@
 - Random versioning
 - Geeky versioning  (Suse )
 
+ref: 
+ - _https://youtu.be/xvPiZyx0cDc_
 
