@@ -1,0 +1,6 @@
+dependencies:
+- name: gitlab-operator
+  repository: https://gitlab.com/api/v4/projects/18899486/packages/helm/stable
+  version: 0.8.1
+digest: sha256:e69cfcd1ae80c3e7d6e59bb6bbbf237feaf735e4ec8eaa7fd20b1f4a7a7c43be
+generated: "2022-07-10T01:12:51.852743+05:30"

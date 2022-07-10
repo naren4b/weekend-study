@@ -1,0 +1,65 @@
+# values-minikube.yaml
+# This example intended as baseline to use Minikube for the deployment of GitLab
+# - Minimized CPU/Memory load, can fit into 3 CPU, 6 GB of RAM (barely)
+# - Services that are not compatible with how Minikube runs are disabled
+# - Some services entirely removed, or scaled down to 1 replica.
+# - Configured to use 192.168.99.100, and nip.io for the domain
+
+# Minimal settings
+global:
+  ingress:
+    configureCertmanager: false
+    class: "nginx"
+    apiVersion: "networking.k8s.io/v1"
+  hosts:
+    domain: demo.local
+    externalIP: 127.0.0.1
+  # Disable Rails bootsnap cache (temporary)
+  rails:
+    bootsnap:
+      enabled: false
+  pod:
+    labels:
+      environment: global
+      prefix/item-1: global
+      service: demo
+  kas:
+    enabled: false   
+
+gitlab: 
+ registry:
+  enabled: false   
+ certmanager-issuer:
+   email: demo@local.com #TODO
+ webservice:
+  helmTests:
+   enabled: false
+  podLabels:
+   environment: local
+   prefix/item-2: local
+   service: demo   
+
+ gitaly:
+  persistence:
+    storageClass: standard # TODO
+    size: 5Gi #TODO
+ minio:
+   persistence:
+      storageClass: standard # TODO
+      size: 7Gi #TODO
+ prometheus:
+   install: false
+ gitlab-runner:
+  install: false
+ ingress:
+    enabled: true
+    class: nginx
+ nginx-ingress:
+  enabled: false
+ certmanager:  
+    installCRDs: false
+    install: false
+postgresql:
+  persistence:
+    storageClass: standard # TODO
+    size: 8Gi #TODO  
