@@ -40,7 +40,7 @@ mv ./kind /usr/local/bin/kind
 ```
 KIND_CLUSTER_NAME=demo
 KIND_NODE_VERSION=v1.22.2
-cat > ${CLUSTER_NAME}-config.yaml <<EOF
+cat > ${KIND_CLUSTER_NAME}-config.yaml <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
