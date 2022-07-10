@@ -35,30 +35,14 @@ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
 chmod +x ./kind
 mv ./kind /usr/local/bin/kind
 ```
-
-# Create a KIND Cluster 1 master 1 worker 
+#### 1. Kind Cluster Setup 
+ Following script installs a kind cluster(1M-1W) with 
+ - local docker registry
+ - `standard` storage class 
+ - `nginx`  ingress-controller 
 ```
-KIND_CLUSTER_NAME=demo
-KIND_NODE_VERSION=v1.22.2
-cat > ${KIND_CLUSTER_NAME}-config.yaml <<EOF
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  image: kindest/node:${KIND_NODE_VERSION}
-  extraPortMappings:
-  - containerPort: 80
-    hostPort: 80
-  - containerPort: 443
-    hostPort: 443
-  - containerPort: 1024
-    hostPort: 1024  
-- role: worker
-  image: kindest/node:${KIND_NODE_VERSION}
-
-EOF
-kind create cluster --name ${KIND_CLUSTER_NAME} --config ${KIND_CLUSTER_NAME}-config.yaml 
-k get nodes -o wide 
+cd installation
+bash install-kind-cluster.sh
 
 ```  
                                                
