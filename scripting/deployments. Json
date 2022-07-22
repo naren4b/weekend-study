@@ -1,0 +1,84 @@
+[
+  {
+    "id": "bc12d628-f668-41af-8a3c-050aba1c8cb8",
+    "version": "2018-01-27T00:22:10.905Z",
+    "affectedApps": [
+      "/dev/serviceapp1"
+    ],
+    "affectedPods": [],
+    "steps": [
+      {
+        "actions": [
+          {
+            "action": "ScaleApplication",
+            "app": "/dev/serviceapp1"
+          }
+        ]
+      }
+    ],
+    "currentActions": [
+      {
+        "action": "ScaleApplication",
+        "app": "/dev/serviceapp1",
+        "readinessCheckResults": []
+      }
+    ],
+    "currentStep": 1,
+    "totalSteps": 1
+  },
+  {
+    "id": "48bca295-f668-41af-933acf938231c8cb8",
+    "version": "2018-01-27T05:00:10.905Z",
+    "affectedApps": [
+      "/qa/testapp"
+    ],
+    "affectedPods": [],
+    "steps": [
+      {
+        "actions": [
+          {
+            "action": "ScaleApplication",
+            "app": "/qa/testapp"
+          }
+        ]
+      }
+    ],
+    "currentActions": [
+      {
+        "action": "ScaleApplication",
+        "app": "/qa/testapp",
+        "readinessCheckResults": []
+      }
+    ],
+    "currentStep": 1,
+    "totalSteps": 1
+  },
+  {
+    "id": "bc12d628-f668-41af-8a3c-4aab392cc34d",
+    "version": "2018-01-27T00:55:10.905Z",
+    "affectedApps": [
+      "/prod/region1/app1a",
+      "/prod/region1/app1b"
+    ],
+    "affectedPods": [],
+    "steps": [
+      {
+        "actions": [
+          {
+            "action": "ScaleApplication",
+            "app": "/prod/region1/app1b"
+          }
+        ]
+      }
+    ],
+    "currentActions": [
+      {
+        "action": "ScaleApplication",
+        "app": "/prod/region1/app1b",
+        "readinessCheckResults": []
+      }
+    ],
+    "currentStep": 1,
+    "totalSteps": 1
+  }
+]
