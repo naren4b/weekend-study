@@ -1,90 +1,9 @@
 # JQ cheat sheet 
-```
-[
-  {
-    "id": "bc12d628-f668-41af-8a3c-050aba1c8cb8",
-    "version": "2018-01-27T00:22:10.905Z",
-    "affectedApps": [
-      "/dev/serviceapp1"
-    ],
-    "affectedPods": [],
-    "steps": [
-      {
-        "actions": [
-          {
-            "action": "ScaleApplication",
-            "app": "/dev/serviceapp1"
-          }
-        ]
-      }
-    ],
-    "currentActions": [
-      {
-        "action": "ScaleApplication",
-        "app": "/dev/serviceapp1",
-        "readinessCheckResults": []
-      }
-    ],
-    "currentStep": 1,
-    "totalSteps": 1
-  },
-  {
-    "id": "48bca295-f668-41af-933acf938231c8cb8",
-    "version": "2018-01-27T05:00:10.905Z",
-    "affectedApps": [
-      "/qa/testapp"
-    ],
-    "affectedPods": [],
-    "steps": [
-      {
-        "actions": [
-          {
-            "action": "ScaleApplication",
-            "app": "/qa/testapp"
-          }
-        ]
-      }
-    ],
-    "currentActions": [
-      {
-        "action": "ScaleApplication",
-        "app": "/qa/testapp",
-        "readinessCheckResults": []
-      }
-    ],
-    "currentStep": 1,
-    "totalSteps": 1
-  },
-  {
-    "id": "bc12d628-f668-41af-8a3c-4aab392cc34d",
-    "version": "2018-01-27T00:55:10.905Z",
-    "affectedApps": [
-      "/prod/region1/app1a",
-      "/prod/region1/app1b"
-    ],
-    "affectedPods": [],
-    "steps": [
-      {
-        "actions": [
-          {
-            "action": "ScaleApplication",
-            "app": "/prod/region1/app1b"
-          }
-        ]
-      }
-    ],
-    "currentActions": [
-      {
-        "action": "ScaleApplication",
-        "app": "/prod/region1/app1b",
-        "readinessCheckResults": []
-      }
-    ],
-    "currentStep": 1,
-    "totalSteps": 1
-  }
-]
-```
+- ref: https://www.markhneedham.com/blog/2015/10/09/jq-error-cannot-iterate-over-null-null/
+- ref: https://www.youtube.com/watch?v=EIhLl9ebeiA&ab_channel=SzymonStepniak
+- ref: https://medium.com/geekculture/my-jq-cheatsheet-34054df5b650
+
+
 # Below is the Bash shell script, including intermediate stages to show the development and use of some jq features:
 ```
 
@@ -98,6 +17,7 @@ URL="http://marathon-hostname:8080/v2/deployments"
 input=deployments.json
 
 curl -s -u ${USER_PW} ${URL} > $input
+
 ```
 
 # pretty print JSON data
