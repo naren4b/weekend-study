@@ -1,0 +1,221 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 0189059e3c74cf9907d2144ebf9bb85eed1d4e2524e789acb325bd704587db9a
+      cni.projectcalico.org/podIP: 192.168.0.18/32
+      cni.projectcalico.org/podIPs: 192.168.0.18/32
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"labels":{"app":"minio"},"name":"minio","namespace":"minio"},"spec":{"containers":[{"args":["minio server /data --console-address :9090"],"command":["/bin/bash","-c"],"image":"quay.io/minio/minio:latest","name":"minio","volumeMounts":[{"mountPath":"/data","name":"localvolume"}]}],"nodeSelector":{"kubernetes.io/hostname":"nks-1"},"volumes":[{"hostPath":{"path":"/mnt/disk1/data","type":"DirectoryOrCreate"},"name":"localvolume"}]}}
+    creationTimestamp: "2022-07-31T02:27:58Z"
+    labels:
+      app: minio
+    name: minio
+    namespace: minio
+    resourceVersion: "81104"
+    uid: 444b6019-e774-4a9b-b5fd-c065633cc979
+  spec:
+    containers:
+    - args:
+      - minio server /data --console-address :9090
+      command:
+      - /bin/bash
+      - -c
+      image: quay.io/minio/minio:latest
+      imagePullPolicy: Always
+      name: minio
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /data
+        name: localvolume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-wtkc4
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: nks-1
+    nodeSelector:
+      kubernetes.io/hostname: nks-1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - hostPath:
+        path: /mnt/disk1/data
+        type: DirectoryOrCreate
+      name: localvolume
+    - name: kube-api-access-wtkc4
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2022-07-31T02:27:58Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2022-07-31T02:28:06Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2022-07-31T02:28:06Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2022-07-31T02:27:58Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://eb2ba7e28094c9a2a32321e7e33253bbf32649353c14dec7b078934dd8134de4
+      image: quay.io/minio/minio:latest
+      imageID: quay.io/minio/minio@sha256:3565ea57dd783ca683b4260f0465a0d26110cfc328586709b2bbecb69735442e
+      lastState: {}
+      name: minio
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2022-07-31T02:28:06Z"
+    hostIP: 192.168.0.207
+    phase: Running
+    podIP: 192.168.0.18
+    podIPs:
+    - ip: 192.168.0.18
+    qosClass: BestEffort
+    startTime: "2022-07-31T02:27:58Z"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"minio"},"name":"minio","namespace":"minio"},"spec":{"ports":[{"name":"console","port":9090,"protocol":"TCP","targetPort":9090},{"name":"api","port":9000,"protocol":"TCP","targetPort":9000}],"selector":{"app":"minio"}}}
+    creationTimestamp: "2022-07-31T02:38:36Z"
+    labels:
+      app: minio
+    name: minio
+    namespace: minio
+    resourceVersion: "85966"
+    uid: 4034924c-4d08-4283-b642-552183801fed
+  spec:
+    clusterIP: 10.106.79.171
+    clusterIPs:
+    - 10.106.79.171
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: console
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+    - name: api
+      port: 9000
+      protocol: TCP
+      targetPort: 9000
+    selector:
+      app: minio
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+apiVersion: v1
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{},"name":"minio","namespace":"minio"},"spec":{"rules":[{"host":"minio.demo.nks.local","http":{"paths":[{"backend":{"service":{"name":"minio","port":{"number":9000}}},"path":"/","pathType":"Prefix"}]}}]}}
+    creationTimestamp: "2022-07-31T02:39:54Z"
+    generation: 2
+    name: minio
+    namespace: minio
+    resourceVersion: "85321"
+    uid: 167a20ed-bfc4-469a-ab84-8ad6e2d468ab
+  spec:
+    rules:
+    - host: minio.demo.nks.local
+      http:
+        paths:
+        - backend:
+            service:
+              name: minio
+              port:
+                number: 9000
+          path: /
+          pathType: Prefix
+  status:
+    loadBalancer:
+      ingress:
+      - hostname: localhost
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{},"name":"minio-console","namespace":"minio"},"spec":{"rules":[{"host":"console.minio.demo.nks.local","http":{"paths":[{"backend":{"service":{"name":"minio","port":{"number":9090}}},"path":"/","pathType":"Prefix"}]}}]}}
+    creationTimestamp: "2022-07-31T03:12:40Z"
+    generation: 1
+    name: minio-console
+    namespace: minio
+    resourceVersion: "85312"
+    uid: 87f722aa-1c78-43aa-8a61-a336f5697e41
+  spec:
+    rules:
+    - host: console.minio.demo.nks.local
+      http:
+        paths:
+        - backend:
+            service:
+              name: minio
+              port:
+                number: 9090
+          path: /
+          pathType: Prefix
+  status:
+    loadBalancer:
+      ingress:
+      - hostname: localhost
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
