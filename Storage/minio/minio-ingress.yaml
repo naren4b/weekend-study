@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio
+  namespace: minio
+spec:
+  rules:
+  - host: minio.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: minio
+            port:
+              number: 9000
+        path: /
+        pathType: Prefix
+#  tls:
+#  - hosts:
+#    - minio.demo.nks.local
+#    secretName: minio-tls
+--- 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio
+  namespace: minio
+spec:
+  rules:
+  - host: console.minio.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: minio
+            port:
+              number: 9090
+        path: /
+        pathType: Prefix
+#  tls:
+#  - hosts:
+#    - minio.demo.nks.local
+#    secretName: minio-tls
